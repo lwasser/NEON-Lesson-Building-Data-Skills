@@ -3,8 +3,8 @@ description: 	A test development site where new data and classroom lessons will 
 #Comment out url when working locally to resolve base urls correctly ok
 #use this when pushing to git for live version
 
-url:      http://neoninc.github.io/NEONDS-Template-Repository/
-baseurl:	http://neoninc.github.io/NEONDS-Template-Repository/
+url:      http://neoninc.github.io/NEON-DataSkills-Lesson-Development
+baseurl:	http://neoninc.github.io/NEON-DataSkills-Lesson-Development
 
 #use this when working locally
 #just uncomment the first localhost.
