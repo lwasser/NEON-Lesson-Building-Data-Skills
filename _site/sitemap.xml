@@ -72,6 +72,14 @@
 
     
     <url>
+        <loc>http://localhost:4000/R/Boulder-Flood-Data/</loc>
+    </url>
+    
+    <url>
+        <loc>http://localhost:4000/R/Boulder-Flood-Data/</loc>
+    </url>
+    
+    <url>
         <loc>http://localhost:4000/R/Boulder-Flood-PreClassroom/</loc>
     </url>
     
@@ -97,10 +105,6 @@
     
     <url>
         <loc>http://localhost:4000/R/Boulder-Flood-Overview5/</loc>
-    </url>
-    
-    <url>
-        <loc>http://localhost:4000/R/Boulder-Flood-Data/</loc>
     </url>
     
 </urlset>
