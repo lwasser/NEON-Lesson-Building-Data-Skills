@@ -14,12 +14,11 @@ scienceThemes: [phenology, disturbance]
 description: "This lesson walks through the steps need to download and visualize
 Precipitation Data and USGS Stream Discharge data in R 
 to better understand the Drivers and Impacts of the 2013 Colorado floods."
-code1: 
 image:
   feature: TeachingModules.jpg
   credit: A National Ecological Observatory Network (NEON) - Teaching Module
   creditlink: http://www.neoninc.org
-permalink: /R/Boulder-Flood-Data/
+permalink: /R/Boulder-Flood-Precipitation-Stream-Discharge-Data-R/
 code1: Boulder-Flood-Data.R
 comments: false
 ---
@@ -86,11 +85,21 @@ library(plotly) #create interactive plots
 
 #Stream Discharge Data
 
+Getting the data
+http://waterdata.usgs.gov/nwis/
+
+
 Map of all monitoring locations:
 http://maps.waterdata.usgs.gov/mapper/index.html
 
 Stream Guage Site
 http://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=06730200
+
+Peak streamflow
+http://nwis.waterdata.usgs.gov/usa/nwis/peak/?site_no=06730200
+
+Auto retrievals
+http://help.waterdata.usgs.gov/faq/automated-retrievals#RT
 
 About Measurements:
 

@@ -14,12 +14,11 @@ scienceThemes: [phenology, disturbance]
 description: "This lesson walks through the steps need to download and visualize
 Palmer Drought Index Data in R 
 to better understand the Drivers and Impacts of the 2013 Colorado floods."
-code1: 
 image:
   feature: TeachingModules.jpg
   credit: A National Ecological Observatory Network (NEON) - Teaching Module
   creditlink: http://www.neoninc.org
-permalink: /R/Boulder-Flood-Data/
+permalink: /R/Boulder-Flood-Palmer-Drought-Soil-Moisture-Data-R/
 code1: Boulder-Flood-Data.R
 comments: false
 ---

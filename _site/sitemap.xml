@@ -72,11 +72,11 @@
 
     
     <url>
-        <loc>http://localhost:4000/R/Boulder-Flood-Data/</loc>
+        <loc>http://localhost:4000/R/Boulder-Flood-Palmer-Drought-Soil-Moisture-Data-R/</loc>
     </url>
     
     <url>
-        <loc>http://localhost:4000/R/Boulder-Flood-Data/</loc>
+        <loc>http://localhost:4000/R/Boulder-Flood-Precipitation-Stream-Discharge-Data-R/</loc>
     </url>
     
     <url>
