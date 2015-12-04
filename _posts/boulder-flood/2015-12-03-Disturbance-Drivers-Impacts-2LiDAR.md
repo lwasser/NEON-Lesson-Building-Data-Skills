@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Quantifying Disturbance Events Drivers & Impacts: LiDAR"
+date:  2015-11-23
+authors: [Leah A. Wasser]
+dateCreated:  2015-05-18
+lastModified: 2015-12-04
+categories: [Coding and Informatics]
+category: coding-and-informatics
+tags: [R, time-series]
+mainTag:
+scienceThemes: [phenology, disturbance]
+description: "About description here."
+code1:
+image:
+  feature: TeachingModules.jpg
+  credit: A National Ecological Observatory Network (NEON) - Teaching Module
+  creditlink: http://www.neoninc.org
+permalink: /R/Boulder-Flood-Overview3/
+code1: Boulder-Flood-Data.R
+comments: false
+---
+
+{% include _toc.html %}
+
+ 
+
+# How do We Measure Changes in Terrain? LiDAR!
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/EYbhNSUnIdU" frameborder="0" allowfullscreen></iframe>
+
+1. How can LiDAR data be collected?  
+2. How might we use LiDAR to hlep study the 2013 Colorado Floods?
+
+### Using LiDAR Data
+
+LiDAR data can be used to create many different models of a landscape.  This
+brief lesson on 
+<a href="http://neondataskills.org/remote-sensing/2_LiDAR-Data-Concepts_Activity2/" target="_blank">
+"What is a CHM, DSM and DTM? About Gridded, Raster LiDAR Data"</a> explores
+three important landscape models that are commonly used.  
+
+1. How might we use a CHM, DSM or DTM model to better understand what happened
+in the 2013 Colorado Flood? 
+2. Would you use only one of the models or could you use two or more of them
+together?
+
+###More Details on LiDAR
+
+If you are particularly interested in how LiDAR works consider taking a closer
+look at how the data is collected and represented by going through this tutorial
+on <a href="http://neondataskills.org/remote-sensing/1_About-LiDAR-Data-Light-Detection-and-Ranging_Activity1/" target="_blank"> "Light Detection and Ranging."</a> 
+
+
+
+#Light Detection and Ranging
+
+<figure>
+
+<img src="http://data-lessons.github.io/NEON-R-Spatial-Raster/images/raster_timeseries/lidarTree-height.png">
+<figcaption>Digital Terrain Models, Digital Surface Models and Canopy height
+models are three common lidar derived data products. The digital terrain model
+allows scientists to study changes in terrain (topography) over time.
+</figcaption>
+</figure>
+

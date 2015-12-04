@@ -1,2 +1,2 @@
-# NEON-DataSkills-Lesson-Development
-This repository will host draft lessons that are under development, before they are pushed to the main, NEON Data Skills repository. 
+# NEONDS-Template-Repository
+This is a template repository for the NEON Data Skills Portal. It is where we will develop style modifications, new content and document the site as it grows

@@ -1,0 +1,614 @@
+---
+layout: post
+title: "Visualize Palmer Drought Index, Precipitation & Stream Discharge Data in 
+R to Better Understand - the 2013 Colorado Floods"
+date: 2015-05-18
+authors: [Leah A. Wasser, Mariela Perignon]
+dateCreated: 2015-05-18
+lastModified: `r format(Sys.time(), "%Y-%m-%d")`
+categories: [Coding and Informatics]
+category: coding-and-informatics
+tags: [R, time-series]
+mainTag: GIS-Spatial-Data
+scienceThemes: [phenology, disturbance]
+description: "This lesson walks through the steps need to download and visualize
+Palmer Drought Index Data, Precipitation Data and USGS Stream Discharge data in R 
+to better understand the Drivers and Impacts of the 2013 Colorado floods."
+code1: 
+image:
+  feature: TeachingModules.jpg
+  credit: A National Ecological Observatory Network (NEON) - Teaching Module
+  creditlink: http://www.neoninc.org
+permalink: /R/Boulder-Flood-Data/
+code1: Boulder-Flood-Data.R
+comments: false
+---
+
+{% include _toc.html %}
+
+Several factors contributed to extreme flooding that occured in Boulder, Colorado 
+in 2013. In this lesson, we will explore several key variables including:
+
+* precipipitation (rainfall) data collected by ???NDCD?? 
+* measures of drought prior to the flooding that explain ...
+* increased stream discharge (or flow) that occured due to combination of the drought 
+conditions and extreme rainfall.
+
+
+<div id="objectives" markdown="1">
+
+###Goals / Objectives
+After completing this activity, you will:
+
+* 
+
+###Things You'll Need To Complete This Lesson
+Please be sure you have the most current version of `R` and, preferably,
+R studio to write your code.
+####R Libraries to Install:
+
+* **ggplot2:** `install.packages("ggplot2")`
+* **lubridate:** `install.packages("lubridate")`
+
+####Data to Download
+
+
+<a href="#" class="btn btn-success"> 
+#</a> 
+
+The LiDAR and imagery data used to create the rasters in this dataset were 
+collected over the <a href="http://www.neoninc.org/science-design/field-sites/harvard-forest" target="_blank" >Harvard</a> and 
+<a href="http://www.neoninc.org/science-design/field-sites/san-joaquin-experimental-range" target="_blank" >San Joaquin</a> field sites 
+and processed at <a href="http://www.neoninc.org" target="_blank" >NEON </a> 
+headquarters. The entire dataset can be accessed by request from the 
+<a href="http://www.neoninc.org/data-resources/get-data/airborne-data" target="_blank"> NEON 
+website.</a>
+
+####Recommended Pre-Lesson Reading
+
+
+#### Lesson Series 
+
+</div>
+
+#R Libraries
+
+We will be working with time-series data in this lesson so we will load the `lubridate`
+library. We will use `ggplot2` to efficiently plot our data.
+
+```{r load-libraries}
+
+library(lubridate) #work with time series data
+library(ggplot2)  #create efficient, professional plots
+library(plotly) #create interactive plots
+
+```
+
+#Soil Moisture
+
+** we could get this from NDCD as well
+Boulder station w Soil Moisture:
+https://www.drought.gov/drought/content/tools/crn-soil-data#
+
+CRN Station
+ID: 1045
+LAT:40.0354
+LON:-105.54090000000001
+Name: BOULDER 14 W
+View Data
+
+#Drought Data - the Palmer Drought Index
+The Palmer Drought Severity Index is an overall index of drought that is particularly
+useful to understand drought associated with agriculture. It uses temperature and 
+precipitation data and soil moisture to calculate water supply and demand.
+
+#About downloading the data...
+
+01 - Ar Drainage Baisin
+02 - CO Drainage Basin
+03 - KS Drainage Basin
+04- Platte Drainage
+05 Rio Grand
+Stuff about the index will go here
+
+https://www.drought.gov/drought/content/products-current-drought-and-monitoring-drought-indicators/palmer-drought-severity-index
+
+We are interested in looking at the general state of drought in Colorado before
+the 2013 floods. The data are in the drought directory of your download here:
+`drought/CDODiv8721376888863_CO.txt`. To begin, we will read the data into `R`.
+
+Our data have a header - the first row repsents the variable name for each column.
+Thus we will use `header=TRUE` when we import the data to tell `R` to use that row
+as a column name rather than a row of data.
+
+```{r import-drought-data }
+#Import State Wide index data
+drought <- read.csv("drought/CDODiv8721376888863_CO.txt", header = TRUE)
+head(drought)
+
+#view data structure
+str(drought)
+```
+
+##Date Fields
+
+Let's have a look at the date field in our data. Viewing the structure, it appears
+as if it is not in a standard format. It imported into R as an integer.
+
+`$ YearMonth: int  199001 199002 199003 199004 199005 199006 199007 ...`
+
+We want to convert these numbers into a date field. We can use the `as.Date` 
+function to convert our string of numbers into a date that `R` will recognize.
+
+```{r convert-year-month }
+#view structure of date field
+str(drought$YearMonth)
+
+#convert to date
+drought$YearMonth <- as.Date(drought$YearMonth, format="%Y%m%d")
+
+```
+
+When we tried to convert our numeric string to a date, `R` returned an origin error.
+`R` needs a day of the month in order to properly convert this to a date class.
+
+We can add this using the `paste0` function. Let's add `01` to each field so `R`
+thinks each date represents the first of the month.
+
+```{r convert-palmer-date }
+#convert date field (YearMonth) to date class
+
+#add a day of the month to each year-month combination
+drought$YearMonth <- paste0(drought$YearMonth,"01")
+
+#convert to date
+drought$YearMonth <- as.Date(drought$YearMonth, format="%Y%m%d")
+```
+
+We've now successfully converted our `YearMonth` column into a date class. Next, 
+let's plot the data using ggplot.
+
+```{r create-quick-palmer-plot }
+
+#plot Palmer Drought Index
+palmer.drought <- ggplot(data=drought,
+       aes(YearMonth,PDSI)) +
+       geom_bar(stat="identity",position = "identity") +
+       xlab("Year / Month") + ylab("Palmer Drought Severity Index") +
+       ggtitle("Palmer Drought Severity Index - Colorado\nNA values included")
+
+palmer.drought
+
+```
+
+Great - we've successfully created a plot, but what is going on with the Y axis?
+It appears as if we have values that extend to -100.
+Let's look at a quick summery of our data.
+
+```{r summary-stats}
+#viw summary stats of the Palmer Drought Severity Index
+summary(drought$PDSI)
+
+#view histogram of the data
+hist(drought$PDSI,
+     main="Histogram of PDSI value",
+     col="wheat3")
+
+```
+
+It appears as if we have a negative value `-99.99` that is throwing off our plot. 
+This value is a `no data` value. We need to assign this value to `NA`, which is `R`'s 
+representation of a null or no data value. 
+
+Then we can plot again!
+
+```{r}
+#assign -99.99 to NA in the PDSI column
+#note: you may want to do this across the entire data.frame or with other columns.
+drought[drought$PDSI==-99.99,] <-  NA
+
+#view the histogram again - does the range look reasonable?
+hist(drought$PDSI,
+     main="Histogram of PDSI value with -99.99 removed",
+     col="springgreen4")
+
+#plot Palmer Drought Index
+ggplot(data=drought,
+       aes(YearMonth,PDSI)) +
+       geom_bar(stat="identity",position = "identity") +
+       xlab("Year") + ylab("Palmer Drought Severity Index") +
+       ggtitle("Palmer Drought Severity Index - Colorado\n1990 to 2015")
+
+
+```
+
+##Plot.ly - Free Online Interactive Plots
+
+We can create an interactive version of our plot using `plot.ly`.
+
+```{r create-plotly-drought-plot1 }
+
+#plot Palmer Drought Index
+ggplot(data=drought,
+       aes(YearMonth,PDSI)) +
+       geom_bar(stat="identity",position = "identity") +
+       xlab("Year") + ylab("Palmer Drought Severity Index") +
+       ggtitle("Palmer Drought Severity Index - Colorado\n1990 to 2015")
+
+#view plotly plot in R
+#note - plotly doesn't recognize \n to create a second title line
+ggplotly()
+
+#publish plotly plot to your plot.ly online account when you are happy with it
+#plotly_POST(droughtPlot.plotly)
+```
+
+#NOTE: we will have to manually present the plot.ly plot here as an embed as R won't 
+knit it out.
+
+##Subsetting our data
+
+Once we have a column of data defined as a date, class in R, we can quickly subset
+the data to view portions of the data. We can subset the data directly in our
+`ggplot` command however that will not translate to `plot.ly`. So let's create a 
+new `r` object that is represents drought data from 2005-2015.
+
+We will then plot that using `ggplot` and `plot.ly`.
+
+To subset, we use the `subset` function, and specify:
+
+1. the R object that we wish to subset
+2. the date column and start date of the subset
+3. the date column and end date of the subset
+
+Let's subset our data.
+
+```{r plotly-drought }
+
+#subset out date between 2005 and 2015 
+drought2005.2015 <- subset(drought, 
+                        YearMonth >= as.Date('2005-01-01', tz = "America/Denver") &
+                        YearMonth <= as.Date('2015-11-01', tz = "America/Denver"))
+
+#plot the data - September-October
+droughtPlot.2005.2015 <- ggplot(data=drought2005.2015,
+        aes(YearMonth,PDSI)) +
+         geom_bar(stat="identity",position = "identity") +
+       xlab("Year / Month") + ylab("Palmer Drought Severity Index") +
+       ggtitle("Palmer Drought Severity Index - Colorado\n2005 - 2015")
+     
+droughtPlot.2005.2015 
+
+#view plotly plot in R
+ggplotly()
+
+#publish plotly plot to your plot.ly online account when you are happy with it
+#plotly_POST(droughtPlot.plotly)
+
+```
+
+#Need to remember where i got the data from. I have a feeling all could be 
+accessed via the API!! but i can't remember how i found PDSI.
+
+This is my order url - but it's expired.
+http://www1.ncdc.noaa.gov/pub/orders/CDODiv5787606888799.txt
+
+drought <- read.
+
+
+#Stream Discharge Data
+
+Map of all monitoring locations:
+http://maps.waterdata.usgs.gov/mapper/index.html
+
+Stream Guage Site
+http://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=06730200
+
+About Measurements:
+
+http://water.usgs.gov/edu/measureflow.html
+
+http://water.usgs.gov/edu/streamflow2.html
+
+#note: it's unclear from this how the data were actually measursed given it seems
+there are diferent sensors. Chuck bohall can probably help us some given he
+worked at USGS.
+
+##About The USGS Stream Monitoring Network
+
+## Getting USGS Stream Gauge Data
+
+Guage Data info:
+
+USGS 06730200 BOULDER CREEK AT NORTH 75TH ST. NEAR BOULDER, CO
+
+* We might include a map of where this guage is using leaflet.
+* We can create the same map for the precip data location as well.
+
+First - view the text file. Notice the first 25 lines are descriptive text rather
+than data. Also notice that this file is separated by tabs rather than commas.
+
+```{r import-discharge, echo=FALSE}
+#SOURCE
+#http://nwis.waterdata.usgs.gov/co/nwis/uv/?cb_00065=on&cb_00060=on&format=rdb&site_no=06730200&period=&begin_date=2013-01-01&end_date=2013-12-31
+#import data
+discharge <- read.table("precip-discharge/2013-discharge.txt",
+                        sep="\t",
+                        stringsAsFactors = FALSE,
+                        skip=25,
+                        header=TRUE)
+
+#view first few lines
+head(discharge)
+
+#remove the first line from the data frame (which is a second list of headers)
+boulderStrDis.2013 <- discharge[2:nrow(discharge),]
+
+#view names
+names(boulderStrDis.2013)
+
+#rename headers so they are more meaningful
+names(boulderStrDis.2013)[5] <- "disValue"
+
+#view names
+names(boulderStrDis.2013)
+```
+
+Let's have a look at the structure of our data. It appears as if the discharge 
+value is a character class. This is likely because we had an additional row in our
+data. Let's convert the discharge column to a numeric class. It appears as if 
+`integer` will work given there are no decimal places in our data.
+
+```{r adjust-data-structure }
+#view structure of data
+str(boulderStrDis.2013)
+
+#convert column to integer
+boulderStrDis.2013$disValue <- as.integer(boulderStrDis.2013$disValue)
+
+class(boulderStrDis.2013$disValue)
+str(boulderStrDis.2013)
+
+```
+
+#Converting Time Stamps
+We have converted our discharge data to an integer format. However the time stamp
+is still a character class. Let's convert it to a time class for efficient plotting,
+next.
+
+```{r convert-time }
+#view class
+class(boulderStrDis.2013$datetime)
+
+#convert to date/time class - POSIX
+boulderStrDis.2013$datetime <- as.POSIXct(boulderStrDis.2013$datetime)
+
+#recheck data structure
+str(boulderStrDis.2013)
+
+#make sure there are no null values in our datetime field
+sum(is.na(boulderStrDis.2013$datetime ))
+
+```
+
+
+Great - let's plot the data. We can use GGPLOT to plot.
+
+```{r plot-flood-data }
+
+ggplot(boulderStrDis.2013, aes(datetime, disValue)) +
+  geom_point()
+
+```
+
+
+We can plot a subset of our data too. Let's specify the months directly around
+the boulder flood - so August - October 2013.
+
+```{r define-time-subset }
+
+#just subset the plot to the month of Aug15-oct15
+startTime <- as.POSIXct("2013-08-15 00:00:00")
+endTime <- as.POSIXct("2013-10-15 00:00:00")
+
+limits <- c(startTime,endTime)
+
+```
+
+#GGPLOT - 
+
+One nice way to keep track of featured added to your plot in ggplot, is by first 
+creating ... 
+
+```{r plot-subset }
+#plot the data - September-October
+disPlot <- ggplot(data=boulderStrDis.2013,
+       aes(datetime,disValue)) +
+      geom_point() +
+      scale_x_datetime(limits=limits)
+      
+#add title and labels
+disPlot + theme(axis.title.x = element_blank()) +
+          xlab("Time") + ylab("Stream Discharge CFS") +
+          ggtitle("Stream Discharge - Station\n Boulder Creek 2013")
+
+
+```
+
+#Publish to Plot.ly
+
+```{r plotly-discharge-data }
+library(plotly)
+
+#subset out some of the data - July-November
+boulderStrDis.aug.oct2013 <- subset(boulderStrDis.2013, 
+                        datetime >= as.POSIXct('2013-08-15 00:00',
+                        tz = "America/New_York") & datetime <=
+        as.POSIXct('2013-10-15 23:59', tz = "America/Denver"))
+
+#plot the data - September-October
+disPlot.plotly <- ggplot(data=boulderStrDis.aug.oct2013,
+        aes(datetime,disValue)) +
+        geom_point(size=3) 
+      
+#add title and labels
+disPlot.plotly <- disPlot.plotly + theme(axis.title.x = element_blank()) +
+          xlab("Time") + ylab("Stream Discharge CFS") +
+          ggtitle("Stream Discharge - Boulder Creek 2013")
+
+#view plotly plot in R
+ggplotly()
+
+#publish plotly plot to your plot.ly online account when you are happy with it
+plotly_POST(disPlot.plotly)
+
+```
+
+#Explore Precipitation During the Flood
+
+```{r import-precip }
+
+precip.boulder <- read.csv("precip-discharge/2013-precip-data-640457.csv",
+                           stringsAsFactors = FALSE)
+
+
+#convert date time
+precip.boulder$DATE <- as.POSIXct(precip.boulder$DATE,
+                                  format="%Y%m%d %H:%M")
+
+#clean up no data values
+precip.boulder$HPCP[precip.boulder$HPCP==99999] <- NA
+
+#plot the data - September-October
+precPlot <- ggplot(data=precip.boulder,
+      aes(DATE,HPCP)) +
+      geom_bar(stat="identity") +
+      scale_x_datetime(limits=limits) +
+      scale_y_continuous(limits = c(0, 300))
+      
+#add title and labels
+precPlot + theme(axis.title.x = element_blank()) +
+          xlab("Time") + ylab("Precipitation (100th of an inch)") +
+          ggtitle("Hourly Precipitation - Boulder - Station\n Boulder Creek 2013")
+
+```
+
+
+```{r daily-summaries }
+
+library(plyr)
+#add a day column in the data frame
+precip.boulder$daily <- floor_date(precip.boulder$DATE, "day")
+
+#summarize by day
+dailyPrecip.boulder <- ddply(precip.boulder, "daily",summarise, x=sum(HPCP))
+
+names(dailyPrecip.boulder)
+
+#let's create a more meaningful column header for the precip value
+names(dailyPrecip.boulder) <- c("day","prec_100In")
+
+# view names
+names(dailyPrecip.boulder)
+
+#are there no data values?
+sum(is.na(dailyPrecip.boulder))
+
+#remove rows with no data
+dailyPrecip.boulder.cln <- na.omit(dailyPrecip.boulder)
+
+#plot the data - September-October
+precPlot <- ggplot(data=dailyPrecip.boulder.cln,
+      aes(day,prec_100In)) +
+       geom_bar(stat="identity") +
+      scale_x_datetime(limits=limits) +
+      scale_y_continuous(limits = c(0, 800))
+      
+#add title and labels
+precPlot + theme(axis.title.x = element_blank()) +
+          xlab("Time") + ylab("Precipitation (100th of an inch)") +
+          ggtitle("DAILY Precipitation - Boulder- Station\n Boulder Creek 2013")
+
+
+```
+
+## Units
+
+It looks like our precipitation data are in 100th of an inch. Let's convert the 
+data to inches - units that we might be a bit more accustomed to. And then let's
+plot the data as a bar plot rather than a scatter plot.
+
+```{r convert-units }
+
+
+#convert to inches
+dailyPrecip.boulder.cln$prec_in <- dailyPrecip.boulder.cln$prec_100In / 100
+
+head(dailyPrecip.boulder.cln)
+
+#plot the data - September-October
+precPlot_2013 <- ggplot(data=dailyPrecip.boulder.cln,
+      aes(day,prec_in)) +
+      geom_bar(stat="identity") +
+      scale_x_datetime() +
+      scale_y_continuous(limits = c(0, 8))
+      
+#add title and labels
+precPlot_2013 <- precPlot_2013 + theme(axis.title.x = element_blank()) +
+          xlab("2013") + ylab("Precipitation (Inches)") +
+          ggtitle("Daily Total Precipitation (Inches) - Boulder- Station\n Boulder Creek 2013")
+
+
+precPlot_2013
+
+#plot the data - September-October
+precPlot <- ggplot(data=dailyPrecip.boulder.cln,
+      aes(day,prec_in)) +
+      geom_bar(stat="identity") +
+      scale_x_datetime(limits=limits) +
+      scale_y_continuous(limits = c(0, 8))
+      
+#add title and labels
+precPlot <- precPlot + theme(axis.title.x = element_blank()) +
+          xlab("Time") + ylab("Precipitation (inches)") +
+          ggtitle("Daily Total Precipitation (Inches) - Boulder- Station\n Boulder Creek 2013")
+
+
+precPlot
+```
+
+#Interactive Plots - Plot.ly
+
+Let's turn our plot into an interactive plot.ly plot
+
+
+
+```{r plotly-precip-data }
+
+library(plotly)
+#setup your plot.ly credentials
+Sys.setenv("plotly_username"="your.user.name.here")
+Sys.setenv("plotly_api_key"="your.key.here")
+
+#subset out some of the data - July-November
+dailyPrec.sub <- subset(dailyPrecip.boulder.cln, 
+                        day >= as.POSIXct('2013-08-15 00:00',
+                        tz = "America/New_York") & day <=
+        as.POSIXct('2013-10-15 23:59', tz = "America/Denver"))
+
+
+#create new plot
+new <- ggplot(data=dailyPrec.sub, aes(day,prec_in)) +
+  geom_bar(stat="identity") +
+  xlab("Time") + ylab("Precipitation (inches)") +
+  ggtitle("Daily Total Precipitation (Inches) - Boulder Creek 2013") 
+
+#view plotly plot in R
+ggplotly()
+
+#publish plotly plot to your plot.ly online account when you are happy with it
+plotly_POST(new)
+
+
+```
+

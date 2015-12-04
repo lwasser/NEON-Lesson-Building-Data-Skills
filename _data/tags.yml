@@ -1,0 +1,25 @@
+- slug: lidar
+  name: LiDAR
+  
+- slug: R
+  name: R programming
+  
+- slug: GIS-Spatial-Data
+  name: Spatial Data & GIS
+
+- slug: HDF5
+  name: Hierarchical Data Formats (HDF5)
+  
+- slug: hyperspectral-remote-sensing
+  name: Hyperspectral Remote Sensing
+  
+- slug: data-viz
+  name: Data Visualization 
+  
+- slug: Data-Workshops
+  name: Data Workshops
+  
+- slug: time-series
+  name: Time Series  
+  
+  
