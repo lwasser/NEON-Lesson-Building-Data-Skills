@@ -10,7 +10,7 @@ category: coding-and-informatics
 tags: [R, time-series]
 mainTag:
 scienceThemes: [phenology, disturbance]
-description: "The overview page I'll use at CU Dec 2015."
+description: "The overview page I used at CU 3 Dec 2015."
 code1:
 image:
   feature: TeachingModules.jpg
