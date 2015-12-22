@@ -1,0 +1,22 @@
+---
+layout: post
+title: "TitleHere"
+date:  2015-11-23
+authors: [Author]
+dateCreated:  2015-11-23
+lastModified: `r format(Sys.time(), "%Y-%m-%d")`
+description: "Brief description."
+code1:
+image:
+  feature: TeachingModules.jpg
+  credit: A National Ecological Observatory Network (NEON) - Teaching Module
+  creditlink: http://www.neoninc.org
+permalink: 
+code1: 
+comments: false
+---
+
+{% include _toc.html %}
+
+## First header
+
