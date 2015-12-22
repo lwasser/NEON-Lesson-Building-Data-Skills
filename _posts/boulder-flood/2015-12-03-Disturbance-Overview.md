@@ -4,7 +4,7 @@ title: "Quantifying Disturbance Events: Disturbance Overview"
 date:  2015-11-23
 authors: [Leah A. Wasser, Megan A. Jones]
 dateCreated:  2015-11-23
-lastModified: 2015-12-04
+lastModified: 2015-12-14
 categories: [Coding and Informatics]
 category: coding-and-informatics
 tags: [R, time-series]

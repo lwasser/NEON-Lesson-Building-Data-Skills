@@ -4,7 +4,7 @@ title: "Quantifying Disturbance Events: Return Interval"
 date:  2015-11-23
 authors: [Leah A. Wasser]
 dateCreated:  2015-05-18
-lastModified: 2015-12-04
+lastModified: 2015-12-14
 categories: [Coding and Informatics]
 category: coding-and-informatics
 tags: [R, time-series]

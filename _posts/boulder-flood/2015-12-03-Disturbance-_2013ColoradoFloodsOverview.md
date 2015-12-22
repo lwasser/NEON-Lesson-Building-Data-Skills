@@ -4,16 +4,14 @@ title: "Quantifying Disturbance Events: 2013 Colorado Floods Overview"
 date:  2015-11-23
 authors: [Leah A. Wasser, Mariela Perignon, Megan A. Jones]
 dateCreated:  2015-11-23
-lastModified: 2015-12-04
+lastModified: 2015-12-14
 categories: [Coding and Informatics]
 category: coding-and-informatics
 tags: [R, time-series]
 mainTag:
 scienceThemes: [phenology, disturbance]
-description: "This page provides materials on ecological disturbances, the 2013 
-Colorado floods, disturbance return intervals, and the basics of LiDAR.  This 
-material will prepare students to learn about and discuss how data can be used 
-to increase our understanding of the causes and effects of a disturbance event."
+description: "This page provides and overview and introductory materials on the
+2013 Colorado floods."
 code1:
 image:
   feature: TeachingModules.jpg

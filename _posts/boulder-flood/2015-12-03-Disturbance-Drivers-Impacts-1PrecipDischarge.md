@@ -4,13 +4,13 @@ title: "Quantifying Disturbance Events Drivers & Impacts: Precipitation & Discha
 date:  2015-11-23
 authors: [Leah A. Wasser]
 dateCreated:  2015-05-18
-lastModified: 2015-12-04
+lastModified: 2015-12-14
 categories: [Coding and Informatics]
 category: coding-and-informatics
 tags: [R, time-series]
 mainTag:
 scienceThemes: [phenology, disturbance]
-description: "The overview page i'll use at CU Dec 2015."
+description: ""
 code1:
 image:
   feature: TeachingModules.jpg
@@ -106,26 +106,6 @@ for 2013. What do you notice about the patterns of discharge seen in these data?
     <script data-plotly="leahawasser:140"  src="https://plot.ly/embed.js" async></script>
 </div>
 
-#Light Detection and Ranging
-
-<figure>
-
-<img src="http://data-lessons.github.io/NEON-R-Spatial-Raster/images/raster_timeseries/lidarTree-height.png">
-<figcaption>Digital Terrain Models, Digital Surface Models and Canopy height
-models are three common lidar derived data products. The digital terrain model
-allows scientists to study changes in terrain (topography) over time.
-</figcaption>
-</figure>
-
-#Imagery Showing changes in Lee Hill Road
-
-<figure>
-
-<img src="http://neonhighered.org/websiteGraphics/2013-Boulder-flood-data.gif
-">
-<figcaption>2013 Flood damage to Lee Hill Road, Boulder, Colorado.
-</figcaption>
-</figure>
 
 
 

@@ -4,13 +4,13 @@ title: "Understanding the 2013 Colorado Floods - #WorkWithData"
 date: 2015-11-23
 authors: [Leah A. Wasser]
 dateCreated: 2015-05-18
-lastModified: 2015-12-04
+lastModified: 2015-12-14
 categories: [Coding and Informatics]
 category: coding-and-informatics
 tags: [R, time-series]
 mainTag:
 scienceThemes: [phenology, disturbance]
-description: "The overview page I'll use at CU Dec 2015."
+description: "The overview page I used at CU 3 Dec 2015."
 code1:
 image:
   feature: TeachingModules.jpg
