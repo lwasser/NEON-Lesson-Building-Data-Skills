@@ -63,8 +63,9 @@ obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]@measurementScale
 ## ----view-units----------------------------------------------------------
 
 
-## ----view-XML-YAML-------------------------------------------------------
+## ----view-XML-YAML, results="hide"---------------------------------------
 #view all elements in YAML format
+#note - i've hidden the output as it's too long
 obj
 
 ## ----eml-get-------------------------------------------------------------

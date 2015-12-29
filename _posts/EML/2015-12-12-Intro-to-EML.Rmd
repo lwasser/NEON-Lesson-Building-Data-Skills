@@ -81,6 +81,8 @@ I'd like to know the following
 2. i'd like to be able to query each column to determine attributes like units that
 I will need to properly work with the data
 
+The goal is moving towards a reproducible workflow.
+
 ```{r view-monthly-attrs }
 #view metadata for the 4th data table which should be monthly average metric
 obj@dataset@dataTable[[4]]
@@ -142,8 +144,9 @@ how do i do that?
 quite small.
 
 We can view all EML attributes in YAML format too.
-```{r view-XML-YAML}
+```{r view-XML-YAML, results="hide"}
 #view all elements in YAML format
+#note - i've hidden the output as it's too long
 obj
 ```
 
