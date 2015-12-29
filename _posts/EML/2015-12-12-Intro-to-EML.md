@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "INTRO to  EML"
+title: "Introduction to EML in R"
 date:   2015-12-28
 authors: []
 contributors: [Leah A. Wasser]
 dateCreated: 2015-10-22
-lastModified: 2015-12-28
+lastModified: 2015-12-29
 tags: [spatio-temporal, time-series, phenology]
 mainTag: time-series
 packagesLibraries: [eml]
@@ -26,9 +26,17 @@ comments: false
     #install R EML tools
     #library("devtools")
     #install_github("ropensci/EML", build=FALSE, dependencies=c("DEPENDS", "IMPORTS"))
+    #devtools::install_github(c("hadley/purrr", "ropensci/EML"))
+    
     
     #call package
     library("EML")
+    library("purrr")
+    library("dplyr")
+    
+    #data location
+    #http://harvardforest.fas.harvard.edu:8080/exist/apps/datasets/showData.html?id=hf001
+    #table 4 http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
 
 Next, read in the EML doc of interest. We are using data from the Harvard 
 Forest LTER tower. This file documents multiple data products that can be downloaded.
@@ -41,6 +49,31 @@ Forest LTER tower. This file documents multiple data products that can be downlo
     object.size(obj)
 
     ## 287015216 bytes
+
+    #get list of measurements for the 4th data table in the EML file
+    stuff <- obj@dataset@dataTable[[4]]@attributeList@attribute
+    #the first column is the date field
+    stuff[[1]]
+
+    ## attributeName: date
+    ## attributeDefinition: date
+    ## measurementScale:
+    ##   dateTime:
+    ##     formatString: YYYY-MM
+    ## .attrs: '1184531853051'
+
+    slotNames(stuff[1])
+
+    ## NULL
+
+    #view the column name and description for the first column
+    stuff[[1]]@attributeName
+
+    ## [1] "date"
+
+    stuff[[1]]@attributeDefinition
+
+    ## [1] "date"
 
 ##Getting Started
 
@@ -58,6 +91,70 @@ dataset and data table structure. Id like one output list that helps me understa
 structure.
 
 
+#View Key Dataset Descriptors
+
+We can begin to explore the contents of our EML file and associated data that it
+describes. Let's start at the dataset level. We can use `eml_get` to view the 
+contact information for the dataset, the keywords and it's associated temporal
+and spatial (if relevant) coverage.
+
+
+
+
+    #view the contact name listed in the file
+    #this works well!
+    eml_get(obj,"contact")
+
+    ## [1] "Emery Boose <boose@fas.harvard.edu>"
+
+    #grab all keywords in the file
+    eml_get(obj,"keywords")
+
+    ## $`LTER controlled vocabulary`
+    ##  [1] "air temperature"                    
+    ##  [2] "atmospheric pressure"               
+    ##  [3] "climate"                            
+    ##  [4] "relative humidity"                  
+    ##  [5] "meteorology"                        
+    ##  [6] "precipitation"                      
+    ##  [7] "net radiation"                      
+    ##  [8] "solar radiation"                    
+    ##  [9] "photosynthetically active radiation"
+    ## [10] "soil temperature"                   
+    ## [11] "wind direction"                     
+    ## [12] "wind speed"                         
+    ## 
+    ## $`LTER core area`
+    ## [1] "disturbance"
+    ## 
+    ## $`HFR default`
+    ## [1] "Harvard Forest" "HFR"            "LTER"           "USA"
+
+    #figure out the extent & temporal coverage of the data
+    eml_get(obj,"coverage")
+
+    ## geographicCoverage:
+    ##   geographicDescription: Prospect Hill Tract (Harvard Forest)
+    ##   boundingCoordinates:
+    ##     westBoundingCoordinate: '-72.18968'
+    ##     eastBoundingCoordinate: '-72.18968'
+    ##     northBoundingCoordinate: '42.53311'
+    ##     southBoundingCoordinate: '42.53311'
+    ##     boundingAltitudes:
+    ##       altitudeMinimum: '342'
+    ##       altitudeMaximum: '342'
+    ##       altitudeUnits: meter
+    ## temporalCoverage:
+    ##   rangeOfDates:
+    ##     beginDate:
+    ##       calendarDate: '2001-02-11'
+    ##     endDate:
+    ##       calendarDate: '2014-11-30'
+
+We can determine how many data tables are described in this EML document. We can
+also view a list of all data tables referenced in the EML document using:
+
+`eml_get(obj,"csv_filepaths")`
 
 
     #How many data tables are described / included in this dataset?
@@ -66,7 +163,9 @@ structure.
     ## [1] 11
 
     #what are the names of those tables?
-    eml_get(obj,"csv_filepaths")
+    data.paths <- eml_get(obj,"csv_filepaths")
+    
+    data.paths
 
     ##  [1] "http://harvardforest.fas.harvard.edu/data/eml/hf001-01-station-log.csv"
     ##  [2] "http://harvardforest.fas.harvard.edu/data/eml/hf001-02-annual-m.csv"   
@@ -80,431 +179,84 @@ structure.
     ## [10] "http://harvardforest.fas.harvard.edu/data/eml/hf001-10-15min-m.csv"    
     ## [11] "http://harvardforest.fas.harvard.edu/data/eml/hf001-11-15min-e.csv"
 
-#view Attributes for a file of interest
+    data.paths[4]
 
-I am interested in working with the monthly average-m csv. #4 in the list. 
-
-I'd like to know the following
-
-1. a list of fields (metrics measured or columns) contained in the file
-2. i'd like to be able to query each column to determine attributes like units that
-I will need to properly work with the data
-
-The goal is moving towards a reproducible workflow.
+    ## [1] "http://harvardforest.fas.harvard.edu/data/eml/hf001-04-monthly-m.csv"
 
 
-    #view metadata for the 4th data table which should be monthly average metric
-    obj@dataset@dataTable[[4]]
+# View description and name of each data table in file
 
-    ## entityName: hf001-04-monthly-m.csv
-    ## entityDescription: monthly (metric) since 2001
-    ## physical:
-    ##   objectName: hf001-04-monthly-m.csv
-    ##   dataFormat:
-    ##     textFormat:
-    ##       numHeaderLines: '1'
-    ##       recordDelimiter: \r\n
-    ##       attributeOrientation: column
-    ##       simpleDelimited:
-    ##         fieldDelimiter: ','
-    ##   distribution:
-    ##     online:
-    ##       url: http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
-    ## attributeList:
-    ##   attribute:
-    ##     attributeName: date
-    ##     attributeDefinition: date
-    ##     measurementScale:
-    ##       dateTime:
-    ##         formatString: YYYY-MM
-    ##     .attrs: '1184531853051'
-    ##   attribute:
-    ##     attributeName: airt
-    ##     attributeDefinition: average air temperature. Average of daily averages.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853081'
-    ##   attribute:
-    ##     attributeName: f.airt
-    ##     attributeDefinition: flag for average air temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: number of daily measurements missing
-    ##     .attrs: '1184531853091'
-    ##   attribute:
-    ##     attributeName: airtmax
-    ##     attributeDefinition: average maximum air temperature. Average of daily maximums.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853101'
-    ##   attribute:
-    ##     attributeName: f.airtmax
-    ##     attributeDefinition: flag for average maximum air temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: number of daily measurements missing
-    ##     .attrs: '1184531853111'
-    ##   attribute:
-    ##     attributeName: airtmin
-    ##     attributeDefinition: average minimum air temperature. Average of daily minimums.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.01'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853121'
-    ##   attribute:
-    ##     attributeName: f.airtmin
-    ##     attributeDefinition: flag for average minimum air temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing
-    ##     .attrs: '1184531853131'
-    ##   attribute:
-    ##     attributeName: airtmmx
-    ##     attributeDefinition: extreme maximum air temperature. Maximum of daily maximums.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853141'
-    ##   attribute:
-    ##     attributeName: f.airtmmx
-    ##     attributeDefinition: flag for extreme maximum air temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853151'
-    ##   attribute:
-    ##     attributeName: airtmmn
-    ##     attributeDefinition: extreme minimum air temperature. Minimum of daily minimums.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853161'
-    ##   attribute:
-    ##     attributeName: f.airtmmn
-    ##     attributeDefinition: flag for extreme minimum air temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853171'
-    ##   attribute:
-    ##     attributeName: prec
-    ##     attributeDefinition: total precipitation. Includes water equivalent of snow. Sum
-    ##       of daily totals.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: millimeter
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853181'
-    ##   attribute:
-    ##     attributeName: f.prec
-    ##     attributeDefinition: flag for precipitation
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853191'
-    ##   attribute:
-    ##     attributeName: slrt
-    ##     attributeDefinition: average total global solar radiation. Average of daily totals.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           customUnit: megajoulePerMeterSquared
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853201'
-    ##   attribute:
-    ##     attributeName: f.slrt
-    ##     attributeDefinition: flag for average total global solar radiation
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853211'
-    ##   attribute:
-    ##     attributeName: part
-    ##     attributeDefinition: average total photosynthetically active radiation. Average
-    ##       of daily totals.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           customUnit: molePerMeterSquared
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853221'
-    ##   attribute:
-    ##     attributeName: f.part
-    ##     attributeDefinition: flag for average total photosynthetically active radiation
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853231'
-    ##   attribute:
-    ##     attributeName: netr
-    ##     attributeDefinition: average net radiation. Includes short and long wave. Corrected
-    ##       for wind speeds above 5 m/s using Cambell Scientific equation. Average of daily
-    ##       averages.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           customUnit: wattPerMeterSquared
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853241'
-    ##   attribute:
-    ##     attributeName: f.netr
-    ##     attributeDefinition: flag for average net radiation
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853251'
-    ##   attribute:
-    ##     attributeName: wspd
-    ##     attributeDefinition: average horizontal scalar wind speed. Average of daily averages.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           standardUnit: metersPerSecond
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853261'
-    ##   attribute:
-    ##     attributeName: f.wspd
-    ##     attributeDefinition: flag for average horizonal scalar wind speed
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853271'
-    ##   attribute:
-    ##     attributeName: wres
-    ##     attributeDefinition: Average horizontal resultant vector wind speed. Vector average
-    ##       of daily averages.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           standardUnit: metersPerSecond
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853281'
-    ##   attribute:
-    ##     attributeName: f.wres
-    ##     attributeDefinition: flag for average horizonal resultant vector wind speed
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853291'
-    ##   attribute:
-    ##     attributeName: wdir
-    ##     attributeDefinition: average horizontal vector wind direction. Measured in degrees
-    ##       clockwise from true north. Vector average of daily values.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: degree
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853301'
-    ##   attribute:
-    ##     attributeName: f.wdir
-    ##     attributeDefinition: flag for average horizonal vector wind direction
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853311'
-    ##   attribute:
-    ##     attributeName: gspd
-    ##     attributeDefinition: extreme maximum gust speed. Maximum of daily maximums.
-    ##     measurementScale:
-    ##       ratio:
-    ##         unit:
-    ##           standardUnit: metersPerSecond
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853321'
-    ##   attribute:
-    ##     attributeName: f.gspd
-    ##     attributeDefinition: flag for extreme maximum gust speed
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853331'
-    ##   attribute:
-    ##     attributeName: s10t
-    ##     attributeDefinition: average soil temperature at 10cm depth. Average of daily
-    ##       averages.
-    ##     measurementScale:
-    ##       interval:
-    ##         unit:
-    ##           standardUnit: celsius
-    ##         precision: '0.1'
-    ##         numericDomain:
-    ##           numberType: real
-    ##     .attrs: '1184531853341'
-    ##   attribute:
-    ##     attributeName: f.s10t
-    ##     attributeDefinition: flag for average soil temperature
-    ##     measurementScale:
-    ##       nominal:
-    ##         nonNumericDomain:
-    ##           enumeratedDomain:
-    ##             codeDefinition:
-    ##               code: M
-    ##               definition: 10 or more daily measurements missing. Summary value not
-    ##                 calculated.
-    ##             codeDefinition:
-    ##               code: 1-9
-    ##               definition: Number of daily measurements missing.
-    ##     .attrs: '1184531853351'
-    ## numberOfRecords: '170'
-    ## .attrs:
-    ## - hf001-04
-    ## - document
 
-    #is this the right data table? yes
-    obj@dataset@dataTable[[4]]@entityName
+    #we can view the data table name and description as follows
+    obj@dataset@dataTable[[1]]@entityName
+
+    ## [1] "hf001-01-station-log.csv"
+
+    obj@dataset@dataTable[[1]]@entityDescription
+
+    ## [1] "station log"
+
+    #create an object that just contains dataTable level attributes
+    all.tables <- obj@dataset@dataTable
+    
+    #use purrrr to generate a data.frame that contains the attrName and Def for each column
+    dataTable.desc <- purrr::map_df(all.tables, 
+                  function(x) 
+                    data.frame(attribute = x@entityName, 
+                                         description = x@entityDescription))
+
+    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
+
+    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
+
+    #view table descriptions
+    dataTable.desc
+
+    ## Source: local data frame [11 x 2]
+    ## 
+    ##                   attribute                    description
+    ##                       (chr)                          (chr)
+    ## 1  hf001-01-station-log.csv                    station log
+    ## 2     hf001-02-annual-m.csv     annual (metric) since 2002
+    ## 3     hf001-03-annual-e.csv    annual (english) since 2002
+    ## 4    hf001-04-monthly-m.csv    monthly (metric) since 2001
+    ## 5    hf001-05-monthly-e.csv   monthly (english) since 2001
+    ## 6      hf001-06-daily-m.csv      daily (metric) since 2001
+    ## 7      hf001-07-daily-e.csv     daily (english) since 2001
+    ## 8     hf001-08-hourly-m.csv      hourly (metric) 2001-2004
+    ## 9     hf001-09-hourly-e.csv     hourly (english) 2001-2004
+    ## 10     hf001-10-15min-m.csv  15-minute (metric) since 2005
+    ## 11     hf001-11-15min-e.csv 15-minute (english) since 2005
+
+Sweet! We now know that are 11 total tables in this dataset. From the descriptions,
+we have a sense of the temporal coverage (date range) and associated temporal
+scale (15 min average, daily average, monthly average, etc). This is a lot of 
+information to get us going. 
+
+The data table of most interest to us now, is montly average, in metric units.
+`hf001-04-monthly-m.csv`. Let's explore that particular table next.
+
+#Learn More about the Fourth Data Table
+
+Let's next explore the attributes of Data Table 4. We can explore it's name,
+a description of the data, it's physical characteristics and it's identifier.
+
+
+    #create an object that contains metadata for table 4 only
+    month.avg.desc <- obj@dataset@dataTable[[4]]
+    
+    #Check out the table's name - make sure it's the right table!
+    month.avg.desc@entityName
 
     ## [1] "hf001-04-monthly-m.csv"
 
     #what information does this data table contain?
-    obj@dataset@dataTable[[4]]@entityDescription
+    month.avg.desc@entityDescription
 
     ## [1] "monthly (metric) since 2001"
 
-    obj@dataset@dataTable[[4]]@physical
+    #how is the text file delimited?
+    month.avg.desc@physical
 
     ## objectName: hf001-04-monthly-m.csv
     ## dataFormat:
@@ -519,10 +271,536 @@ The goal is moving towards a reproducible workflow.
     ##     url: http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
 
     #view table id
-    obj@dataset@dataTable[[4]]@id
+    month.avg.desc@id
 
     ##         id 
     ## "hf001-04"
+
+    #this is the download URL for the file.
+    month.avg.desc@physical@distribution@online@url
+
+    ## [1] "http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv"
+
+#View Attributes for a file of interest
+
+In this case, we are interested in learning more about the monthly average data
+table - `data.paths[4]`. Before we download the data, we'd like to view the fields
+that are contained in the data table to ensure this is the data we need to download.
+
+We can use `month.avg.desc` to generate an object that only contains the attribute
+information for our data table of interest (monthly averaged data).
+
+We will generate a summary of fields in our data table that includes:
+
+1. The field names (metrics measured or columns) `attributeName`
+2. The description of each field `attributeDefinition`
+
+
+
+    #view attributes for the 4th data table - monthly average
+    month.avg.desc@attributeList
+
+    ## attribute:
+    ##   attributeName: date
+    ##   attributeDefinition: date
+    ##   measurementScale:
+    ##     dateTime:
+    ##       formatString: YYYY-MM
+    ##   .attrs: '1184531853051'
+    ## attribute:
+    ##   attributeName: airt
+    ##   attributeDefinition: average air temperature. Average of daily averages.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853081'
+    ## attribute:
+    ##   attributeName: f.airt
+    ##   attributeDefinition: flag for average air temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: number of daily measurements missing
+    ##   .attrs: '1184531853091'
+    ## attribute:
+    ##   attributeName: airtmax
+    ##   attributeDefinition: average maximum air temperature. Average of daily maximums.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853101'
+    ## attribute:
+    ##   attributeName: f.airtmax
+    ##   attributeDefinition: flag for average maximum air temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: number of daily measurements missing
+    ##   .attrs: '1184531853111'
+    ## attribute:
+    ##   attributeName: airtmin
+    ##   attributeDefinition: average minimum air temperature. Average of daily minimums.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.01'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853121'
+    ## attribute:
+    ##   attributeName: f.airtmin
+    ##   attributeDefinition: flag for average minimum air temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing
+    ##   .attrs: '1184531853131'
+    ## attribute:
+    ##   attributeName: airtmmx
+    ##   attributeDefinition: extreme maximum air temperature. Maximum of daily maximums.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853141'
+    ## attribute:
+    ##   attributeName: f.airtmmx
+    ##   attributeDefinition: flag for extreme maximum air temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853151'
+    ## attribute:
+    ##   attributeName: airtmmn
+    ##   attributeDefinition: extreme minimum air temperature. Minimum of daily minimums.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853161'
+    ## attribute:
+    ##   attributeName: f.airtmmn
+    ##   attributeDefinition: flag for extreme minimum air temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853171'
+    ## attribute:
+    ##   attributeName: prec
+    ##   attributeDefinition: total precipitation. Includes water equivalent of snow. Sum
+    ##     of daily totals.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: millimeter
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853181'
+    ## attribute:
+    ##   attributeName: f.prec
+    ##   attributeDefinition: flag for precipitation
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853191'
+    ## attribute:
+    ##   attributeName: slrt
+    ##   attributeDefinition: average total global solar radiation. Average of daily totals.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         customUnit: megajoulePerMeterSquared
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853201'
+    ## attribute:
+    ##   attributeName: f.slrt
+    ##   attributeDefinition: flag for average total global solar radiation
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853211'
+    ## attribute:
+    ##   attributeName: part
+    ##   attributeDefinition: average total photosynthetically active radiation. Average
+    ##     of daily totals.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         customUnit: molePerMeterSquared
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853221'
+    ## attribute:
+    ##   attributeName: f.part
+    ##   attributeDefinition: flag for average total photosynthetically active radiation
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853231'
+    ## attribute:
+    ##   attributeName: netr
+    ##   attributeDefinition: average net radiation. Includes short and long wave. Corrected
+    ##     for wind speeds above 5 m/s using Cambell Scientific equation. Average of daily
+    ##     averages.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         customUnit: wattPerMeterSquared
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853241'
+    ## attribute:
+    ##   attributeName: f.netr
+    ##   attributeDefinition: flag for average net radiation
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853251'
+    ## attribute:
+    ##   attributeName: wspd
+    ##   attributeDefinition: average horizontal scalar wind speed. Average of daily averages.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         standardUnit: metersPerSecond
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853261'
+    ## attribute:
+    ##   attributeName: f.wspd
+    ##   attributeDefinition: flag for average horizonal scalar wind speed
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853271'
+    ## attribute:
+    ##   attributeName: wres
+    ##   attributeDefinition: Average horizontal resultant vector wind speed. Vector average
+    ##     of daily averages.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         standardUnit: metersPerSecond
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853281'
+    ## attribute:
+    ##   attributeName: f.wres
+    ##   attributeDefinition: flag for average horizonal resultant vector wind speed
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853291'
+    ## attribute:
+    ##   attributeName: wdir
+    ##   attributeDefinition: average horizontal vector wind direction. Measured in degrees
+    ##     clockwise from true north. Vector average of daily values.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: degree
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853301'
+    ## attribute:
+    ##   attributeName: f.wdir
+    ##   attributeDefinition: flag for average horizonal vector wind direction
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853311'
+    ## attribute:
+    ##   attributeName: gspd
+    ##   attributeDefinition: extreme maximum gust speed. Maximum of daily maximums.
+    ##   measurementScale:
+    ##     ratio:
+    ##       unit:
+    ##         standardUnit: metersPerSecond
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853321'
+    ## attribute:
+    ##   attributeName: f.gspd
+    ##   attributeDefinition: flag for extreme maximum gust speed
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853331'
+    ## attribute:
+    ##   attributeName: s10t
+    ##   attributeDefinition: average soil temperature at 10cm depth. Average of daily averages.
+    ##   measurementScale:
+    ##     interval:
+    ##       unit:
+    ##         standardUnit: celsius
+    ##       precision: '0.1'
+    ##       numericDomain:
+    ##         numberType: real
+    ##   .attrs: '1184531853341'
+    ## attribute:
+    ##   attributeName: f.s10t
+    ##   attributeDefinition: flag for average soil temperature
+    ##   measurementScale:
+    ##     nominal:
+    ##       nonNumericDomain:
+    ##         enumeratedDomain:
+    ##           codeDefinition:
+    ##             code: M
+    ##             definition: 10 or more daily measurements missing. Summary value not calculated.
+    ##           codeDefinition:
+    ##             code: 1-9
+    ##             definition: Number of daily measurements missing.
+    ##   .attrs: '1184531853351'
+
+    #create an object that only contains attribute values for the month av data
+    month.avg.desc.attr <- month.avg.desc@attributeList
+    
+    # use a split-apply-combine approach to parse the attribute data
+    # and create a data.frame with only the attribute name and description
+    
+    #dplyr approach
+    do.call(rbind, 
+            lapply(stuff, function(x) data.frame(column.name = x@attributeName, 
+                                                 definition = x@attributeDefinition)))
+
+    ##             column.name
+    ## attribute          date
+    ## attribute1         airt
+    ## attribute2       f.airt
+    ## attribute3      airtmax
+    ## attribute4    f.airtmax
+    ## attribute5      airtmin
+    ## attribute6    f.airtmin
+    ## attribute7      airtmmx
+    ## attribute8    f.airtmmx
+    ## attribute9      airtmmn
+    ## attribute10   f.airtmmn
+    ## attribute11        prec
+    ## attribute12      f.prec
+    ## attribute13        slrt
+    ## attribute14      f.slrt
+    ## attribute15        part
+    ## attribute16      f.part
+    ## attribute17        netr
+    ## attribute18      f.netr
+    ## attribute19        wspd
+    ## attribute20      f.wspd
+    ## attribute21        wres
+    ## attribute22      f.wres
+    ## attribute23        wdir
+    ## attribute24      f.wdir
+    ## attribute25        gspd
+    ## attribute26      f.gspd
+    ## attribute27        s10t
+    ## attribute28      f.s10t
+    ##                                                                                                                                                           definition
+    ## attribute                                                                                                                                                       date
+    ## attribute1                                                                                                       average air temperature. Average of daily averages.
+    ## attribute2                                                                                                                          flag for average air temperature
+    ## attribute3                                                                                               average maximum air temperature. Average of daily maximums.
+    ## attribute4                                                                                                                  flag for average maximum air temperature
+    ## attribute5                                                                                               average minimum air temperature. Average of daily minimums.
+    ## attribute6                                                                                                                  flag for average minimum air temperature
+    ## attribute7                                                                                               extreme maximum air temperature. Maximum of daily maximums.
+    ## attribute8                                                                                                                  flag for extreme maximum air temperature
+    ## attribute9                                                                                               extreme minimum air temperature. Minimum of daily minimums.
+    ## attribute10                                                                                                                 flag for extreme minimum air temperature
+    ## attribute11                                                                             total precipitation. Includes water equivalent of snow. Sum of daily totals.
+    ## attribute12                                                                                                                                   flag for precipitation
+    ## attribute13                                                                                           average total global solar radiation. Average of daily totals.
+    ## attribute14                                                                                                            flag for average total global solar radiation
+    ## attribute15                                                                              average total photosynthetically active radiation. Average of daily totals.
+    ## attribute16                                                                                               flag for average total photosynthetically active radiation
+    ## attribute17 average net radiation. Includes short and long wave. Corrected for wind speeds above 5 m/s using Cambell Scientific equation. Average of daily averages.
+    ## attribute18                                                                                                                           flag for average net radiation
+    ## attribute19                                                                                         average horizontal scalar wind speed. Average of daily averages.
+    ## attribute20                                                                                                             flag for average horizonal scalar wind speed
+    ## attribute21                                                                        Average horizontal resultant vector wind speed. Vector average of daily averages.
+    ## attribute22                                                                                                   flag for average horizonal resultant vector wind speed
+    ## attribute23                                 average horizontal vector wind direction. Measured in degrees clockwise from true north. Vector average of daily values.
+    ## attribute24                                                                                                         flag for average horizonal vector wind direction
+    ## attribute25                                                                                                   extreme maximum gust speed. Maximum of daily maximums.
+    ## attribute26                                                                                                                      flag for extreme maximum gust speed
+    ## attribute27                                                                                       average soil temperature at 10cm depth. Average of daily averages.
+    ## attribute28                                                                                                                        flag for average soil temperature
+
+    #use purrrr to generate a data.frame that contains the attrName and Def for each column
+    tbl4.clms <- purrr::map_df(stuff, 
+                  function(x) 
+                    data.frame(attribute = x@attributeName, 
+                                         description = x@attributeDefinition))
+
+    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
+
+    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
+
+    head(tbl4.clms)
+
+    ## Source: local data frame [6 x 2]
+    ## 
+    ##   attribute                                                 description
+    ##       (chr)                                                       (chr)
+    ## 1      date                                                        date
+    ## 2      airt         average air temperature. Average of daily averages.
+    ## 3    f.airt                            flag for average air temperature
+    ## 4   airtmax average maximum air temperature. Average of daily maximums.
+    ## 5 f.airtmax                    flag for average maximum air temperature
+    ## 6   airtmin average minimum air temperature. Average of daily minimums.
+
+We've now successfully explored our data. From our data.frame generated above, we
+can see that this data table contains air temperature and precipitation - two 
+key drivers of phenology. Thus, let's go ahead and download the data.
+
+**note** I'd like to directly download the 4th data table. Can I use `eml_get` to
+accomplish this?
+
+
+
+    #tried to subset out the dataTable component of the eml obj
+    dat <- eml_get(obj@dataset@dataTable[[4]], "data.frame")
+
+    ## Error in eml_get(obj@dataset@dataTable[[4]], "data.frame"): object 'eml' must be of class 'eml'
+
+    #in theory the code below should work but it throws a URL error
+    library(RCurl)
+    x <- getURL(data.paths[4])
+    y <- read.csv(text = x)
+    
+    #the url below does work, why can't R access it but my browser can?
+    url <- month.avg.desc@physical@distribution@online@url
+    getURL(url)
+
+    ## [1] "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>301 Moved Permanently</title>\n</head><body>\n<h1>Moved Permanently</h1>\n<p>The document has moved <a href=\"http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/data/p00/hf001/hf001-04-monthly-m.csv\">here</a>.</p>\n<hr>\n<address>Apache/2.2.15 (Red Hat) Server at harvardforest.fas.harvard.edu Port 80</address>\n</body></html>\n"
+
+    y
+
+    ##                                                                                                                X..DOCTYPE.HTML.PUBLIC....IETF..DTD.HTML.2.0..EN.
+    ## 1                                                                                                                                                   <html><head>
+    ## 2                                                                                                                           <title>301 Moved Permanently</title>
+    ## 3                                                                                                                                                  </head><body>
+    ## 4                                                                                                                                     <h1>Moved Permanently</h1>
+    ## 5 <p>The document has moved <a href=http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/data/eml/hf001-04-monthly-m.csv>here</a>.</p>
+    ## 6                                                                                                                                                           <hr>
+    ## 7                                                                     <address>Apache/2.2.15 (Red Hat) Server at harvardforest.fas.harvard.edu Port 80</address>
+    ## 8                                                                                                                                                 </body></html>
+
+    #x <- getURL("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv")
+    
+    #the url below works.
+    #http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
+
 
 Next, id like a nice clean list of attribute names (column names) for just this
 data table. i don't need all of the descriptive text just yet. Can i get that?
@@ -940,7 +1218,6 @@ data table. i don't need all of the descriptive text just yet. Can i get that?
     ##   numericDomain:
     ##     numberType: real
 
-
 #View metadata for a column
 
 Next, i'd like to be able to view the units or other attributes for a field that
@@ -963,33 +1240,6 @@ We can view all EML attributes in YAML format too.
     #note - i've hidden the output as it's too long
     obj
 
-I am not sure what the "attributelist" element returns. This is curious.
-
-
-    #Get Attributes
-    #what is this returning?
-    eml_get(obj, "attributeList")
-
-    ## $attribute
-    ## $attribute[[1]]
-    ## [1] "date"
-    ## 
-    ## $attribute[[2]]
-    ## [1] "date"
-    ## 
-    ## $attribute[[3]]
-    ## [1] "YYYY-MM-DD"
-    ## 
-    ## 
-    ## $attribute
-    ## $attribute[[1]]
-    ## [1] "notes"
-    ## 
-    ## $attribute[[2]]
-    ## [1] "notes"
-    ## 
-    ## $attribute[[3]]
-    ## [1] "notes"
 
 ##What does eml_get do below? it seems to try to download everything.
 
@@ -1000,73 +1250,7 @@ It hung up my mac processing. Would like to know more.
     #store it in a data.frame format
     #dat <- eml_get(obj, "data.frame")
 
-The code below works well.
 
-
-    #view the contact name listed in the file
-    #this works well!
-    eml_get(obj,"contact")
-
-    ## [1] "Emery Boose <boose@fas.harvard.edu>"
-
-    #grab all keywords in the file
-    eml_get(obj,"keywords")
-
-    ## $`LTER controlled vocabulary`
-    ##  [1] "air temperature"                    
-    ##  [2] "atmospheric pressure"               
-    ##  [3] "climate"                            
-    ##  [4] "relative humidity"                  
-    ##  [5] "meteorology"                        
-    ##  [6] "precipitation"                      
-    ##  [7] "net radiation"                      
-    ##  [8] "solar radiation"                    
-    ##  [9] "photosynthetically active radiation"
-    ## [10] "soil temperature"                   
-    ## [11] "wind direction"                     
-    ## [12] "wind speed"                         
-    ## 
-    ## $`LTER core area`
-    ## [1] "disturbance"
-    ## 
-    ## $`HFR default`
-    ## [1] "Harvard Forest" "HFR"            "LTER"           "USA"
-
-    #figure out the extent & temporal coverage of the data
-    eml_get(obj,"coverage")
-
-    ## geographicCoverage:
-    ##   geographicDescription: Prospect Hill Tract (Harvard Forest)
-    ##   boundingCoordinates:
-    ##     westBoundingCoordinate: '-72.18968'
-    ##     eastBoundingCoordinate: '-72.18968'
-    ##     northBoundingCoordinate: '42.53311'
-    ##     southBoundingCoordinate: '42.53311'
-    ##     boundingAltitudes:
-    ##       altitudeMinimum: '342'
-    ##       altitudeMaximum: '342'
-    ##       altitudeUnits: meter
-    ## temporalCoverage:
-    ##   rangeOfDates:
-    ##     beginDate:
-    ##       calendarDate: '2001-02-11'
-    ##     endDate:
-    ##       calendarDate: '2014-11-30'
-
-    #view list of files that you can download as described in the EML object 
-    eml_get(obj,"csv_filepaths")
-
-    ##  [1] "http://harvardforest.fas.harvard.edu/data/eml/hf001-01-station-log.csv"
-    ##  [2] "http://harvardforest.fas.harvard.edu/data/eml/hf001-02-annual-m.csv"   
-    ##  [3] "http://harvardforest.fas.harvard.edu/data/eml/hf001-03-annual-e.csv"   
-    ##  [4] "http://harvardforest.fas.harvard.edu/data/eml/hf001-04-monthly-m.csv"  
-    ##  [5] "http://harvardforest.fas.harvard.edu/data/eml/hf001-05-monthly-e.csv"  
-    ##  [6] "http://harvardforest.fas.harvard.edu/data/eml/hf001-06-daily-m.csv"    
-    ##  [7] "http://harvardforest.fas.harvard.edu/data/eml/hf001-07-daily-e.csv"    
-    ##  [8] "http://harvardforest.fas.harvard.edu/data/eml/hf001-08-hourly-m.csv"   
-    ##  [9] "http://harvardforest.fas.harvard.edu/data/eml/hf001-09-hourly-e.csv"   
-    ## [10] "http://harvardforest.fas.harvard.edu/data/eml/hf001-10-15min-m.csv"    
-    ## [11] "http://harvardforest.fas.harvard.edu/data/eml/hf001-11-15min-e.csv"
 
 #get EML id?
 

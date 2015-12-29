@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "INTRO to  EML"
+title: "Introduction to EML in R"
 date:   2015-12-28
 authors: []
 contributors: [Leah A. Wasser]
@@ -22,14 +22,21 @@ comments: false
 
 {% include _toc.html %}
 
-```{r install-EML-package }
+```{r install-EML-package, results="hide", warning=FALSE }
 #install R EML tools
 #library("devtools")
 #install_github("ropensci/EML", build=FALSE, dependencies=c("DEPENDS", "IMPORTS"))
+#devtools::install_github(c("hadley/purrr", "ropensci/EML"))
+
 
 #call package
 library("EML")
+library("purrr")
+library("dplyr")
 
+#data location
+#http://harvardforest.fas.harvard.edu:8080/exist/apps/datasets/showData.html?id=hf001
+#table 4 http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
 ```
 
 Next, read in the EML doc of interest. We are using data from the Harvard 
@@ -41,6 +48,17 @@ obj <- eml_read("http://harvardforest.fas.harvard.edu/data/eml/hf001.xml")
 
 #view size of object
 object.size(obj)
+
+#get list of measurements for the 4th data table in the EML file
+stuff <- obj@dataset@dataTable[[4]]@attributeList@attribute
+#the first column is the date field
+stuff[[1]]
+
+slotNames(stuff[1])
+
+#view the column name and description for the first column
+stuff[[1]]@attributeName
+stuff[[1]]@attributeDefinition
 ```
 
 ##Getting Started
@@ -59,6 +77,33 @@ dataset and data table structure. Id like one output list that helps me understa
 structure.
 
 
+#View Key Dataset Descriptors
+
+We can begin to explore the contents of our EML file and associated data that it
+describes. Let's start at the dataset level. We can use `eml_get` to view the 
+contact information for the dataset, the keywords and it's associated temporal
+and spatial (if relevant) coverage.
+
+
+
+```{r view-eml-content }
+#view the contact name listed in the file
+#this works well!
+eml_get(obj,"contact")
+
+#grab all keywords in the file
+eml_get(obj,"keywords")
+
+#figure out the extent & temporal coverage of the data
+eml_get(obj,"coverage")
+
+
+```
+
+We can determine how many data tables are described in this EML document. We can
+also view a list of all data tables referenced in the EML document using:
+
+`eml_get(obj,"csv_filepaths")`
 
 ```{r EML-Structure }
 
@@ -66,39 +111,139 @@ structure.
 length(obj@dataset@dataTable)
 
 #what are the names of those tables?
-eml_get(obj,"csv_filepaths")
+data.paths <- eml_get(obj,"csv_filepaths")
 
+data.paths
+
+data.paths[4]
+```
+
+
+# View description and name of each data table in file
+
+```{r view-data-tables }
+
+#we can view the data table name and description as follows
+obj@dataset@dataTable[[1]]@entityName
+obj@dataset@dataTable[[1]]@entityDescription
+
+#create an object that just contains dataTable level attributes
+all.tables <- obj@dataset@dataTable
+
+#use purrrr to generate a data.frame that contains the attrName and Def for each column
+dataTable.desc <- purrr::map_df(all.tables, 
+              function(x) 
+                data.frame(attribute = x@entityName, 
+                                     description = x@entityDescription))
+#view table descriptions
+dataTable.desc
 
 ```
 
-#view Attributes for a file of interest
+Sweet! We now know that are 11 total tables in this dataset. From the descriptions,
+we have a sense of the temporal coverage (date range) and associated temporal
+scale (15 min average, daily average, monthly average, etc). This is a lot of 
+information to get us going. 
 
-I am interested in working with the monthly average-m csv. #4 in the list. 
+The data table of most interest to us now, is montly average, in metric units.
+`hf001-04-monthly-m.csv`. Let's explore that particular table next.
 
-I'd like to know the following
+#Learn More about the Fourth Data Table
 
-1. a list of fields (metrics measured or columns) contained in the file
-2. i'd like to be able to query each column to determine attributes like units that
-I will need to properly work with the data
+Let's next explore the attributes of Data Table 4. We can explore it's name,
+a description of the data, it's physical characteristics and it's identifier.
 
-The goal is moving towards a reproducible workflow.
+```{r data-table-attr }
 
-```{r view-monthly-attrs }
-#view metadata for the 4th data table which should be monthly average metric
-obj@dataset@dataTable[[4]]
+#create an object that contains metadata for table 4 only
+month.avg.desc <- obj@dataset@dataTable[[4]]
 
-#is this the right data table? yes
-obj@dataset@dataTable[[4]]@entityName
+#Check out the table's name - make sure it's the right table!
+month.avg.desc@entityName
 
 #what information does this data table contain?
-obj@dataset@dataTable[[4]]@entityDescription
+month.avg.desc@entityDescription
 
-obj@dataset@dataTable[[4]]@physical
+#how is the text file delimited?
+month.avg.desc@physical
 
 #view table id
-obj@dataset@dataTable[[4]]@id
+month.avg.desc@id
+
+#this is the download URL for the file.
+month.avg.desc@physical@distribution@online@url
+```
+
+#View Attributes for a file of interest
+
+In this case, we are interested in learning more about the monthly average data
+table - `data.paths[4]`. Before we download the data, we'd like to view the fields
+that are contained in the data table to ensure this is the data we need to download.
+
+We can use `month.avg.desc` to generate an object that only contains the attribute
+information for our data table of interest (monthly averaged data).
+
+We will generate a summary of fields in our data table that includes:
+
+1. The field names (metrics measured or columns) `attributeName`
+2. The description of each field `attributeDefinition`
+
+
+```{r view-monthly-attrs }
+
+#view attributes for the 4th data table - monthly average
+month.avg.desc@attributeList
+
+#create an object that only contains attribute values for the month av data
+month.avg.desc.attr <- month.avg.desc@attributeList
+
+# use a split-apply-combine approach to parse the attribute data
+# and create a data.frame with only the attribute name and description
+
+#dplyr approach
+do.call(rbind, 
+        lapply(stuff, function(x) data.frame(column.name = x@attributeName, 
+                                             definition = x@attributeDefinition)))
+
+#use purrrr to generate a data.frame that contains the attrName and Def for each column
+tbl4.clms <- purrr::map_df(stuff, 
+              function(x) 
+                data.frame(attribute = x@attributeName, 
+                                     description = x@attributeDefinition))
+
+head(tbl4.clms)
+```
+
+We've now successfully explored our data. From our data.frame generated above, we
+can see that this data table contains air temperature and precipitation - two 
+key drivers of phenology. Thus, let's go ahead and download the data.
+
+**note** I'd like to directly download the 4th data table. Can I use `eml_get` to
+accomplish this?
+
+
+```{r download-data }
+
+#tried to subset out the dataTable component of the eml obj
+dat <- eml_get(obj@dataset@dataTable[[4]], "data.frame")
+
+#in theory the code below should work but it throws a URL error
+library(RCurl)
+x <- getURL(data.paths[4])
+y <- read.csv(text = x)
+
+#the url below does work, why can't R access it but my browser can?
+url <- month.avg.desc@physical@distribution@online@url
+getURL(url)
+
+y
+#x <- getURL("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv")
+
+#the url below works.
+#http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
 
 ```
+
 
 Next, id like a nice clean list of attribute names (column names) for just this
 data table. i don't need all of the descriptive text just yet. Can i get that?
@@ -123,7 +268,6 @@ obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]
 obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]@measurementScale
 
 ```
-
 
 #View metadata for a column
 
@@ -150,42 +294,19 @@ We can view all EML attributes in YAML format too.
 obj
 ```
 
-I am not sure what the "attributelist" element returns. This is curious.
-
-```{r eml-get }
-#Get Attributes
-#what is this returning?
-eml_get(obj, "attributeList")
-
-```
 
 ##What does eml_get do below? it seems to try to download everything.
 
 It hung up my mac processing. Would like to know more. 
 
-```{r download-data }
+```{r download-data2 }
 #download in all data that the eml references
 #store it in a data.frame format
 #dat <- eml_get(obj, "data.frame")
 
 ```
 
-The code below works well.
 
-```{r view-eml-content }
-#view the contact name listed in the file
-#this works well!
-eml_get(obj,"contact")
-
-#grab all keywords in the file
-eml_get(obj,"keywords")
-
-#figure out the extent & temporal coverage of the data
-eml_get(obj,"coverage")
-
-#view list of files that you can download as described in the EML object 
-eml_get(obj,"csv_filepaths")
-```
 
 #get EML id?
 
