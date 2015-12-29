@@ -1,0 +1,203 @@
+---
+layout: post
+title: "INTRO to  EML"
+date:   2015-12-28
+authors: []
+contributors: [Leah A. Wasser]
+dateCreated: 2015-10-22
+lastModified: `r format(Sys.time(), "%Y-%m-%d")`
+tags: [spatio-temporal, time-series, phenology]
+mainTag: time-series
+packagesLibraries: [eml]
+category: 
+description: "this lesson teaches you stuff. "
+code1: 
+image:
+  feature: NEONCarpentryHeader_2.png
+  credit: A collaboration between the National Ecological Observatory Network (NEON) and Data Carpentry
+  creditlink: http://www.neoninc.org
+permalink: /R/EML
+comments: false
+---
+
+{% include _toc.html %}
+
+```{r install-EML-package }
+#install R EML tools
+#library("devtools")
+#install_github("ropensci/EML", build=FALSE, dependencies=c("DEPENDS", "IMPORTS"))
+
+#call package
+library("EML")
+
+```
+
+Next, read in the EML doc of interest. We are using data from the Harvard 
+Forest LTER tower. This file documents multiple data products that can be downloaded.
+
+```{r read-eml }
+#import EML from Harvard Forest Met Data
+obj <- eml_read("http://harvardforest.fas.harvard.edu/data/eml/hf001.xml")
+
+#view size of object
+object.size(obj)
+```
+
+##Getting Started
+
+An eml file seems to consist of
+
+1. a **dataset** - this is similar to a NEON data product. A dataset may contain
+one or more data tables associated with it that has different types of related
+information. FOr the harvard data, we are looking at tower measurements, aggregated
+at various time intervales (15 minute, daily, etc).
+2. **data tables** these are the actual data that make up the dataset. At NEON
+we call these sub products.
+
+To begin, i'd like to quickly scan the EML file and understand the 
+dataset and data table structure. Id like one output list that helps me understand
+structure.
+
+
+
+```{r EML-Structure }
+
+#How many data tables are described / included in this dataset?
+length(obj@dataset@dataTable)
+
+#what are the names of those tables?
+eml_get(obj,"csv_filepaths")
+
+
+```
+
+#view Attributes for a file of interest
+
+I am interested in working with the monthly average-m csv. #4 in the list. 
+
+I'd like to know the following
+
+1. a list of fields (metrics measured or columns) contained in the file
+2. i'd like to be able to query each column to determine attributes like units that
+I will need to properly work with the data
+
+```{r view-monthly-attrs }
+#view metadata for the 4th data table which should be monthly average metric
+obj@dataset@dataTable[[4]]
+
+#is this the right data table? yes
+obj@dataset@dataTable[[4]]@entityName
+
+#what information does this data table contain?
+obj@dataset@dataTable[[4]]@entityDescription
+
+obj@dataset@dataTable[[4]]@physical
+
+#view table id
+obj@dataset@dataTable[[4]]@id
+
+```
+
+Next, id like a nice clean list of attribute names (column names) for just this
+data table. i don't need all of the descriptive text just yet. Can i get that?
+
+```{r view-attr-list }
+#what are the attributes in the data?
+obj@dataset@dataTable[[4]]@attributeList
+
+#view one set of attributes - the first in the list
+obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]
+
+#for date fields i'd like to know the format and the timezone
+obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]@measurementScale
+obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]@attributeName
+
+
+#view second attribute in the list - airt
+obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]
+
+#I am at the units with the string below
+#phew - long. what i really want is to be able to grab the unit programmatically
+obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]@measurementScale
+
+```
+
+
+#View metadata for a column
+
+Next, i'd like to be able to view the units or other attributes for a field that
+i might need for processing. For example i need to know the timezone for these
+data in order to convert to a time field.
+
+how do i do that?
+
+```{r view-units }
+
+```
+
+
+
+
+**NOTE:** The imported object is fairly large - especially considering the XML itself is
+quite small.
+
+We can view all EML attributes in YAML format too.
+```{r view-XML-YAML}
+#view all elements in YAML format
+obj
+```
+
+I am not sure what the "attributelist" element returns. This is curious.
+
+```{r eml-get }
+#Get Attributes
+#what is this returning?
+eml_get(obj, "attributeList")
+
+```
+
+##What does eml_get do below? it seems to try to download everything.
+
+It hung up my mac processing. Would like to know more. 
+
+```{r download-data }
+#download in all data that the eml references
+#store it in a data.frame format
+#dat <- eml_get(obj, "data.frame")
+
+```
+
+The code below works well.
+
+```{r view-eml-content }
+#view the contact name listed in the file
+#this works well!
+eml_get(obj,"contact")
+
+#grab all keywords in the file
+eml_get(obj,"keywords")
+
+#figure out the extent & temporal coverage of the data
+eml_get(obj,"coverage")
+
+#view list of files that you can download as described in the EML object 
+eml_get(obj,"csv_filepaths")
+```
+
+#get EML id?
+
+```{r get-id}
+#not sure what this ID is
+eml_get(obj,"id")
+
+#not sure what this is doing either.
+eml = eml_read("knb-lter-hfr.205.4")
+
+eml@dataset@dataTable[[1]]@attributeList@attribute[[2]]
+
+obj@dataset@dataTable
+
+```
+
+
+
