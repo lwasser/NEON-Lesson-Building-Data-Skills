@@ -36,15 +36,25 @@ eml_get(eml_HARV,"keywords")
 eml_get(eml_HARV,"coverage")
 
 
+## ----view-dataset-eml----------------------------------------------------
+
+#view dataset abstract (description)
+eml_HARV@dataset@abstract
+
+#the above might be easier to read if we force line breaks!
+#we can use strwrap to do this
+#write out abstract - forcing line breaks
+strwrap(eml_HARV@dataset@abstract, width = 80)
+
 ## ----find-geographic-coverage--------------------------------------------
 #view geographic coverage
 eml_HARV@dataset@coverage@geographicCoverage
 
 
-## ----map-location, warning=FALSE-----------------------------------------
-#
+## ----map-location, warning=FALSE, message=FALSE--------------------------
+# grab x coordinate
 XCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@westBoundingCoordinate
-
+#grab y coordinate
 YCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@northBoundingCoordinate
 
 
@@ -52,16 +62,9 @@ library(ggmap)
 #map <- get_map(location='Harvard', maptype = "terrain")
 map <- get_map(location='massachusetts', maptype = "toner", zoom =8)
 
-#map <- get_map(location='massachusetts', maptype = "roadmap")
-
 ggmap(map, extent=TRUE) +
-  geom_point(aes(x=XCoord,y=YCoord), color="darkred",size=6, pch=18)
-
-
-## ----view-dataset-eml----------------------------------------------------
-
-#view dataset abstract (description)
-eml_HARV@dataset@abstract
+  geom_point(aes(x=XCoord,y=YCoord), 
+             color="darkred", size=6, pch=18)
 
 
 ## ----view-data-tables----------------------------------------------------
@@ -70,19 +73,25 @@ eml_HARV@dataset@abstract
 #we can view the data table name and description as follows
 eml_HARV@dataset@dataTable[[1]]@entityName
 eml_HARV@dataset@dataTable[[1]]@entityDescription
+#view download path
+eml_HARV@dataset@dataTable[[1]]@physical@distribution@online@url
 
+## ----create-datatable-df-------------------------------------------------
 #create an object that just contains dataTable level attributes
 all.tables <- eml_HARV@dataset@dataTable
 
 #use purrrr to generate a data.frame that contains the attrName and Def for each column
 dataTable.desc <- purrr::map_df(all.tables, 
-              function(x) 
-              data.frame(attribute = x@entityName, 
-                        description = x@entityDescription))
+              function(x) data_frame(attribute = x@entityName, 
+                        description = x@entityDescription,
+                        download.path = x@physical@distribution@online@url))
 
 #view table descriptions
 dataTable.desc
-#how many rows (data tables) are in the list?
+#view just the paths (they are too long to render in the output above)
+head(dataTable.desc[3])
+
+#how many rows (data tables) are in the data_frame?
 nrow(dataTable.desc)
 
 
@@ -121,44 +130,39 @@ EML.hr.attr[[1]]@attributeDefinition
 #EML.15min.attr
 
 # use a split-apply-combine approach to parse the attribute data
-# and create a data.frame with only the attribute name and description
+# and create a data_frame with only the attribute name and description
 
 #dplyr approach
 #do.call(rbind, 
 #        lapply(EML.15min.attr, function(x) data.frame(column.name = x@attributeName, 
 #                                             definition = x@attributeDefinition)))
 
-#use purrrr to generate a data.frame that contains the attrName and Def for each column
+#use purrrr to generate a dplyr data_frame that contains the attrName 
+#and Def for each column
 EML.hr.attr.dt8 <- purrr::map_df(EML.hr.attr, 
-              function(x) 
-                data.frame(attribute = x@attributeName, 
-                                     description = x@attributeDefinition))
+              function(x) data_frame(attribute = x@attributeName, 
+                          description = x@attributeDefinition))
 
 EML.hr.attr.dt8
 
+#view first 6 rows for each column 
+head(EML.hr.attr.dt8$attribute)
+head(EML.hr.attr.dt8$description)
+
+
 ## ----download-data-------------------------------------------------------
 
-#tried to subset out the dataTable component of the eml obj
-dat <- eml_get(obj@dataset@dataTable[[4]], "data.frame")
+#view url
+EML.hr.dataTable@physical@distribution@online@url
 
-dat <- eml_get(EML.hr.dataTable@physical@distribution@online@url,
-               "data.frame")
+#Read in csv (data table 8)
+month.avg.m.HARV <- read.csv(EML.hr.dataTable@physical@distribution@online@url,
+                             stringsAsFactors = FALSE)
 
-#in theory the code below should work but it throws a URL error
-library(RCurl)
-x <- getURL(EML.hr.dataTable@physical@distribution@online@url)
-y <- read.csv(text = x)
+str(month.avg.m.HARV)
 
-#the url below does work, why can't R access it but my browser can?
-url <- month.avg.desc@physical@distribution@online@url
-getURL(url)
-
-y
-#x <- getURL("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv")
-
-#the url below works.
-#http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
-
+# view table structure
+EML.hr.dataTable@physical
 
 ## ----EML-Structure-------------------------------------------------------
 ###THIS IS THE WRONG OUTPUT FOR SOME REASON??

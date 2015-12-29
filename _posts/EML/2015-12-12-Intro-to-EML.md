@@ -154,15 +154,50 @@ and spatial (if relevant) coverage.
     ##     endDate:
     ##       calendarDate: '2014-11-30'
 
-##Figure Out Geographic Coverage
-Above we were able to access the geographic coverage. Let's plot that quickly on 
-a map for reference. We can access this information using the slots, which are
+Next, let's view the abstract that describes the data.
+
+
+    #view dataset abstract (description)
+    eml_HARV@dataset@abstract
+
+    ## [1] "The Fisher Meteorological Station became operational on 11 Feb 2001. The Station is located in an open field 200 m north of the Shaler Station, in a site chosen to minimize the angle of surrounding trees above the horizon (currently 15-25 degrees from the station at breast height). The Fisher Station records air temperature, relative humidity, dew point, precipitation (water equivalent of snow), global solar radiation, PAR radiation, net radiation, barometric pressure, scalar wind speed, vector wind speed, peak gust speed (1-second), vector wind direction, standard deviation of wind direction (wind measurements at 10 m height), and soil temperature (10 cm depth). Instruments are scanned once per second, and 15-minute (hourly before 2005) and daily values are calculated and stored by a datalogger. Data for the current month are available online, updated every 15 minutes, with out-of-range values replaced by NA but values not otherwise checked. Earlier data are checked and archived with missing, questionable, and estimated values flagged, following methods of the LTER ClimbDB project. A log of events affecting station measurements (e.g., instrument repair and recalibration, ice storms, lightning) and selected monthly and annual values are also posted.For current data, please see: http://harvardforest.fas.harvard.edu/meteorological-hydrological-stations. For a complete set of archived data, please see: http://harvardforest.fas.harvard.edu:8080/exist/xquery/data.xq?id=hf001."
+
+    #the above might be easier to read if we force line breaks!
+    #we can use strwrap to do this
+    #write out abstract - forcing line breaks
+    strwrap(eml_HARV@dataset@abstract, width = 80)
+
+    ##  [1] "The Fisher Meteorological Station became operational on 11 Feb 2001. The"       
+    ##  [2] "Station is located in an open field 200 m north of the Shaler Station, in a"    
+    ##  [3] "site chosen to minimize the angle of surrounding trees above the horizon"       
+    ##  [4] "(currently 15-25 degrees from the station at breast height). The Fisher Station"
+    ##  [5] "records air temperature, relative humidity, dew point, precipitation (water"    
+    ##  [6] "equivalent of snow), global solar radiation, PAR radiation, net radiation,"     
+    ##  [7] "barometric pressure, scalar wind speed, vector wind speed, peak gust speed"     
+    ##  [8] "(1-second), vector wind direction, standard deviation of wind direction (wind"  
+    ##  [9] "measurements at 10 m height), and soil temperature (10 cm depth). Instruments"  
+    ## [10] "are scanned once per second, and 15-minute (hourly before 2005) and daily"      
+    ## [11] "values are calculated and stored by a datalogger. Data for the current month"   
+    ## [12] "are available online, updated every 15 minutes, with out-of-range values"       
+    ## [13] "replaced by NA but values not otherwise checked. Earlier data are checked and"  
+    ## [14] "archived with missing, questionable, and estimated values flagged, following"   
+    ## [15] "methods of the LTER ClimbDB project. A log of events affecting station"         
+    ## [16] "measurements (e.g., instrument repair and recalibration, ice storms, lightning)"
+    ## [17] "and selected monthly and annual values are also posted.For current data, please"
+    ## [18] "see: http://harvardforest.fas.harvard.edu/meteorological-hydrological-stations."
+    ## [19] "For a complete set of archived data, please see:"                               
+    ## [20] "http://harvardforest.fas.harvard.edu:8080/exist/xquery/data.xq?id=hf001."
+
+
+##Determine Geographic Coverage
+Above we were able to view the geographic coverage. Let's plot the x, y values
+on a map for reference to ensure that the data are within our study area region of
+interest. We can access geographic extent using the slots, which are
 accessed in `R` using the `@` sign. 
 
 <i class="fa fa-star"></i> **Data Tip:**  To figure out the full slot string, 
-in `RStudio` we can use Tab Complete! 
+in `RStudio` we can use Tab Complete as we type.
 {: .notice }
-
 
 
 
@@ -183,72 +218,45 @@ in `RStudio` we can use Tab Complete!
 ##Identify & Map Data Location
 
 Looking at the coverage for our data, there is only one unique x and y value. This 
-suggests that our data were collected at one point location. We know this is a 
-tower so a point makes sense. Let's grab the x and y coordinates and create a quick
-context map. We will use `ggmap` to create our map.
+suggests that our data were collected at (x,y) one point location. We know this is a 
+tower so a point location makes sense. Let's grab the x and y coordinates and 
+create a quick context map. We will use `ggmap` to create our map.
 
 **NOTE: if this were a rectangular extent we'd want the bounding BOX. this is important
-if the data are for eample, raster format, in HDF5 or something. we need the extent
+if the data are for example, raster format, in HDF5 or something. we need the extent
 to properly geolocate and process the data.**
 
-Nice cheatsheet
-https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf
+<a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf" target="_blank">Learn More: A nice cheatsheet for GGMAP created by NCEAS</a>
 
 
-    #
+    # grab x coordinate
     XCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@westBoundingCoordinate
-    
+    #grab y coordinate
     YCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@northBoundingCoordinate
     
     
     library(ggmap)
     #map <- get_map(location='Harvard', maptype = "terrain")
     map <- get_map(location='massachusetts', maptype = "toner", zoom =8)
-
-    ## maptype = "toner" is only available with source = "stamen".
-    ## resetting to source = "stamen"...
-    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=massachusetts&zoom=8&size=640x640&scale=2&maptype=terrain&sensor=false
-    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=massachusetts&sensor=false
-    ## Map from URL : http://tile.stamen.com/toner/8/75/93.png
-    ## Map from URL : http://tile.stamen.com/toner/8/76/93.png
-    ## Map from URL : http://tile.stamen.com/toner/8/77/93.png
-    ## Map from URL : http://tile.stamen.com/toner/8/78/93.png
-    ## Map from URL : http://tile.stamen.com/toner/8/75/94.png
-    ## Map from URL : http://tile.stamen.com/toner/8/76/94.png
-    ## Map from URL : http://tile.stamen.com/toner/8/77/94.png
-    ## Map from URL : http://tile.stamen.com/toner/8/78/94.png
-    ## Map from URL : http://tile.stamen.com/toner/8/75/95.png
-    ## Map from URL : http://tile.stamen.com/toner/8/76/95.png
-    ## Map from URL : http://tile.stamen.com/toner/8/77/95.png
-    ## Map from URL : http://tile.stamen.com/toner/8/78/95.png
-
-    #map <- get_map(location='massachusetts', maptype = "roadmap")
     
     ggmap(map, extent=TRUE) +
-      geom_point(aes(x=XCoord,y=YCoord), color="darkred",size=6, pch=18)
+      geom_point(aes(x=XCoord,y=YCoord), 
+                 color="darkred", size=6, pch=18)
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-12-12-Intro-to-EML/map-location-1.png) 
 
 We now have identified and mapped the point location where our data were collected. 
-We know the data are close enough to our study area to be useful.
-
-Next, let's dig into the dataset structure to figure out what metrics that data 
-contain.
+We know the data are close enough to our study area to be useful. Next, let's 
+dig into the dataset structure to figure out what metrics that data contain.
 
 ##Accessing dataset structure using EML
 
 To understand the data that are available for us to work with, let's first explore
-the `dataset` structure as outline in our `EML` file. We can access key components
-of the dataset metadata structure using slots which are accessed via the `@`.
+the `data table` structure as outlined in our `EML` file. We can access key components
+of the dataset metadata structure using slots via the `@` symbol.
 
 For example `eml_HARV@dataset` will return the entire dataset metadata structure.
 Let's view the description of abstract for the dataset.
-
-
-    #view dataset abstract (description)
-    eml_HARV@dataset@abstract
-
-    ## [1] "The Fisher Meteorological Station became operational on 11 Feb 2001. The Station is located in an open field 200 m north of the Shaler Station, in a site chosen to minimize the angle of surrounding trees above the horizon (currently 15-25 degrees from the station at breast height). The Fisher Station records air temperature, relative humidity, dew point, precipitation (water equivalent of snow), global solar radiation, PAR radiation, net radiation, barometric pressure, scalar wind speed, vector wind speed, peak gust speed (1-second), vector wind direction, standard deviation of wind direction (wind measurements at 10 m height), and soil temperature (10 cm depth). Instruments are scanned once per second, and 15-minute (hourly before 2005) and daily values are calculated and stored by a datalogger. Data for the current month are available online, updated every 15 minutes, with out-of-range values replaced by NA but values not otherwise checked. Earlier data are checked and archived with missing, questionable, and estimated values flagged, following methods of the LTER ClimbDB project. A log of events affecting station measurements (e.g., instrument repair and recalibration, ice storms, lightning) and selected monthly and annual values are also posted.For current data, please see: http://harvardforest.fas.harvard.edu/meteorological-hydrological-stations. For a complete set of archived data, please see: http://harvardforest.fas.harvard.edu:8080/exist/xquery/data.xq?id=hf001."
 
 # View description and name of each data table in file
 
@@ -265,8 +273,6 @@ syntax:
 
 Let's try this next!
 
-**NOTE: rbind warning - what does that mean? **
-
 
     #we can view the data table name and description as follows
     eml_HARV@dataset@dataTable[[1]]@entityName
@@ -277,23 +283,31 @@ Let's try this next!
 
     ## [1] "station log"
 
+    #view download path
+    eml_HARV@dataset@dataTable[[1]]@physical@distribution@online@url
+
+    ## [1] "http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-01-station-log.csv"
+
+
+To create a data frame with the 3 pieces of information abouve listed for each
+data table, we first can create  an object that contains EML information for
+just the data tables. Then we can use `purrr` to efficiently extract the 
+information for each data table. 
+
+
     #create an object that just contains dataTable level attributes
     all.tables <- eml_HARV@dataset@dataTable
     
     #use purrrr to generate a data.frame that contains the attrName and Def for each column
     dataTable.desc <- purrr::map_df(all.tables, 
-                  function(x) 
-                  data.frame(attribute = x@entityName, 
-                            description = x@entityDescription))
-
-    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
-
-    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
-
+                  function(x) data_frame(attribute = x@entityName, 
+                            description = x@entityDescription,
+                            download.path = x@physical@distribution@online@url))
+    
     #view table descriptions
     dataTable.desc
 
-    ## Source: local data frame [11 x 2]
+    ## Source: local data frame [11 x 3]
     ## 
     ##                   attribute                    description
     ##                       (chr)                          (chr)
@@ -308,28 +322,44 @@ Let's try this next!
     ## 9     hf001-09-hourly-e.csv     hourly (english) 2001-2004
     ## 10     hf001-10-15min-m.csv  15-minute (metric) since 2005
     ## 11     hf001-11-15min-e.csv 15-minute (english) since 2005
+    ## Variables not shown: download.path (chr)
 
-    #how many rows (data tables) are in the list?
+    #view just the paths (they are too long to render in the output above)
+    head(dataTable.desc[3])
+
+    ## Source: local data frame [6 x 1]
+    ## 
+    ##                                                                 download.path
+    ##                                                                         (chr)
+    ## 1 http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-01-station-log.cs
+    ## 2   http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-02-annual-m.csv
+    ## 3   http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-03-annual-e.csv
+    ## 4  http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
+    ## 5  http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-05-monthly-e.csv
+    ## 6    http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-06-daily-m.csv
+
+    #how many rows (data tables) are in the data_frame?
     nrow(dataTable.desc)
 
     ## [1] 11
 
-**NOTE: the above code is complex given the length of the slot calls. it would be 
+**NOTE: the above code is complex given the length of the slot calls. It would be 
 VERY NICE to have a function to help the user along with quickly generating / accessing
 data table attributes and descriptions.**
 
 
-Sweet! We now know that are 11 total data tables in this dataset. From the descriptions,
+Sweet! We now know there are 11 total data tables in this dataset. From the descriptions,
 we have a sense of the temporal coverage (date range) and associated temporal
-scale (15 min average, daily average, monthly average, etc). This is a lot of 
-information to get us going. 
+scale (15 min average, daily average, monthly average, etc). We also have the 
+path to download each file directly if we'd like to. This is a lot of 
+information to get us going!
 
 The data table of most interest to us now, is hourly average, in metric units.
-`hf001-08-hourly-m.csv`. Let's explore that particular table next.
+`hf001-08-hourly-m.csv`.
 
 #Data Table Metadata
-Let's next explore the attributes of Data Table 8. We can explore it's name,
-a description of the data, it's physical characteristics and it's identifier.
+Let's next explore the attributes of Data Table 8 - `hf001-08-hourly-m.csv`. We 
+can explore its name, description, physical characteristics and identifier.
 
 
     #create an object that contains metadata for table 8 only
@@ -423,23 +453,19 @@ Let's do that next.
     #EML.15min.attr
     
     # use a split-apply-combine approach to parse the attribute data
-    # and create a data.frame with only the attribute name and description
+    # and create a data_frame with only the attribute name and description
     
     #dplyr approach
     #do.call(rbind, 
     #        lapply(EML.15min.attr, function(x) data.frame(column.name = x@attributeName, 
     #                                             definition = x@attributeDefinition)))
     
-    #use purrrr to generate a data.frame that contains the attrName and Def for each column
+    #use purrrr to generate a dplyr data_frame that contains the attrName 
+    #and Def for each column
     EML.hr.attr.dt8 <- purrr::map_df(EML.hr.attr, 
-                  function(x) 
-                    data.frame(attribute = x@attributeName, 
-                                         description = x@attributeDefinition))
-
-    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
-
-    ## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character
-
+                  function(x) data_frame(attribute = x@attributeName, 
+                              description = x@attributeDefinition))
+    
     EML.hr.attr.dt8
 
     ## Source: local data frame [30 x 2]
@@ -459,61 +485,119 @@ Let's do that next.
     ## ..       ...
     ## Variables not shown: description (chr)
 
+    #view first 6 rows for each column 
+    head(EML.hr.attr.dt8$attribute)
+
+    ## [1] "datetime" "jd"       "airt"     "f.airt"   "rh"       "f.rh"
+
+    head(EML.hr.attr.dt8$description)
+
+    ## [1] "date and time at end of sampling period"                       
+    ## [2] "Julian day"                                                    
+    ## [3] "air temperature. Average of 1-second measurements."            
+    ## [4] "flag for air temperature"                                      
+    ## [5] "relative humidity. Average of 1-second measurements. (percent)"
+    ## [6] "flag for relative humidity"
+
+From our data.frame generated above, we can see that this data table contains 
+air temperature and precipitation - two key drivers of phenology. 
+
 ##Download Data Table
 
-We've now successfully explored our data. From our data.frame generated above, we
-can see that this data table contains air temperature and precipitation - two 
-key drivers of phenology. Thus, let's go ahead and download the data.
+We've now have:
 
-**note** I'd like to directly download the 4th data table. Can I use `eml_get` to
-accomplish this?
+* successfully explored the dataset described in our `EML` file
+* identified the location where the data was collected and determined it is in the 
+desired range of our study area.
+* Identified the sub data tables described in the data set
+* Explored the data contained in the data tables and identified a table that we'd 
+like to work with
+
+Thus, let's go ahead and download the data table of interest. Using the EML
+file, we identified the URL where Table "8" can be downloaded:
+
+`EML.hr.dataTable@physical@distribution@online@url`
+
+We can use that output, with the base R `read.csv()` function to import the data
+table into a `dplyr data_frame`.
 
 
 
-    #tried to subset out the dataTable component of the eml obj
-    dat <- eml_get(obj@dataset@dataTable[[4]], "data.frame")
+    #view url
+    EML.hr.dataTable@physical@distribution@online@url
 
-    ## Error in eml_get(obj@dataset@dataTable[[4]], "data.frame"): object 'eml' must be of class 'eml'
+    ## [1] "http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv"
 
-    dat <- eml_get(EML.hr.dataTable@physical@distribution@online@url,
-                   "data.frame")
-
-    ## Error in eml_get(EML.hr.dataTable@physical@distribution@online@url, "data.frame"): object 'eml' must be of class 'eml'
-
-    #in theory the code below should work but it throws a URL error
-    library(RCurl)
-    x <- getURL(EML.hr.dataTable@physical@distribution@online@url)
-    y <- read.csv(text = x)
+    #Read in csv (data table 8)
+    month.avg.m.HARV <- read.csv(EML.hr.dataTable@physical@distribution@online@url,
+                                 stringsAsFactors = FALSE)
     
-    #the url below does work, why can't R access it but my browser can?
-    url <- month.avg.desc@physical@distribution@online@url
-    getURL(url)
+    str(month.avg.m.HARV)
 
-    ## [1] "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>301 Moved Permanently</title>\n</head><body>\n<h1>Moved Permanently</h1>\n<p>The document has moved <a href=\"http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/data/p00/hf001/hf001-04-monthly-m.csv\">here</a>.</p>\n<hr>\n<address>Apache/2.2.15 (Red Hat) Server at harvardforest.fas.harvard.edu Port 80</address>\n</body></html>\n"
+    ## 'data.frame':	34080 obs. of  30 variables:
+    ##  $ datetime: chr  "2001-02-11T01:00" "2001-02-11T02:00" "2001-02-11T03:00" "2001-02-11T04:00" ...
+    ##  $ jd      : int  42 42 42 42 42 42 42 42 42 42 ...
+    ##  $ airt    : num  -9.6 -10.2 -10.6 -11 -11.4 -12.1 -12.9 -13.2 -12.4 -11.1 ...
+    ##  $ f.airt  : chr  "" "" "" "" ...
+    ##  $ rh      : int  54 54 51 51 50 49 53 54 49 42 ...
+    ##  $ f.rh    : chr  "" "" "" "" ...
+    ##  $ dewp    : num  -17.3 -17.7 -18.8 -19.1 -19.7 -20.6 -20.5 -20.6 -21 -21.5 ...
+    ##  $ f.dewp  : chr  "" "" "" "" ...
+    ##  $ prec    : num  0 0 0 0 0 0 0 0 0 0 ...
+    ##  $ f.prec  : chr  "" "" "" "" ...
+    ##  $ slrr    : int  0 0 0 0 0 0 2 71 285 454 ...
+    ##  $ f.slrr  : chr  "" "" "" "" ...
+    ##  $ parr    : int  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ f.parr  : chr  "M" "M" "M" "M" ...
+    ##  $ netr    : int  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ f.netr  : chr  "M" "M" "M" "M" ...
+    ##  $ bar     : int  1017 1018 1019 1019 1020 1021 1022 1023 1024 1024 ...
+    ##  $ f.bar   : chr  "" "" "" "" ...
+    ##  $ wspd    : num  3.4 2.9 3.5 3.3 3.6 3.9 3.5 3.2 3.8 3.5 ...
+    ##  $ f.wspd  : chr  "" "" "" "" ...
+    ##  $ wres    : num  3.1 2.7 3.2 3 3.4 3.7 3.3 3 3.5 3.2 ...
+    ##  $ f.wres  : chr  "" "" "" "" ...
+    ##  $ wdir    : int  282 274 279 281 278 278 277 279 281 284 ...
+    ##  $ f.wdir  : chr  "" "" "" "" ...
+    ##  $ wdev    : int  21 22 23 24 22 21 20 21 23 26 ...
+    ##  $ f.wdev  : chr  "" "" "" "" ...
+    ##  $ gspd    : num  9.6 7.8 15.4 9.5 12.2 11 9.3 8.6 9.8 12.8 ...
+    ##  $ f.gspd  : chr  "" "" "" "" ...
+    ##  $ s10t    : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ f.s10t  : chr  "M" "M" "M" "M" ...
 
-    y
+    # view table structure
+    EML.hr.dataTable@physical
 
-    ##                                                                                                                     X..DOCTYPE.HTML.PUBLIC....IETF..DTD.HTML.2.0..EN.
-    ## 1                                                                                                                                                        <html><head>
-    ## 2                                                                                                                                <title>301 Moved Permanently</title>
-    ## 3                                                                                                                                                       </head><body>
-    ## 4                                                                                                                                          <h1>Moved Permanently</h1>
-    ## 5 <p>The document has moved <a href=http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/data/p00/hf001/hf001-08-hourly-m.csv>here</a>.</p>
-    ## 6                                                                                                                                                                <hr>
-    ## 7                                                                          <address>Apache/2.2.15 (Red Hat) Server at harvardforest.fas.harvard.edu Port 80</address>
-    ## 8                                                                                                                                                      </body></html>
+    ## objectName: hf001-08-hourly-m.csv
+    ## dataFormat:
+    ##   textFormat:
+    ##     numHeaderLines: '1'
+    ##     recordDelimiter: \r\n
+    ##     attributeOrientation: column
+    ##     simpleDelimited:
+    ##       fieldDelimiter: ','
+    ## distribution:
+    ##   online:
+    ##     url: http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv
 
-    #x <- getURL("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv")
-    
-    #the url below works.
-    #http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
+We are now ready to work with the data!
+
+<div id="challenge" markdown="1">
+Questions
+
+1. How many header lines does the csv contain?
+2. What is the field delimiter (e.g. comma, tab, etc)
+3. What time zone is the data in (we will need this to convert the date time field)
+4. Is there a `noData` value? If so, what is it?
+
+HINT: it may be easier to skim the metadata using search to discover answers to 
+some of the questions above. Why?
+</div>
+
 
 
 #OTHER STUFF
-
-
-We can determine how many data tables are described in this EML document. We can
-also view a list of all data tables referenced in the EML document using:
 
 `eml_get(obj,"csv_filepaths")`
 
