@@ -16,117 +16,137 @@ library("dplyr")
 
 ## ----read-eml------------------------------------------------------------
 #import EML from Harvard Forest Met Data
-obj <- eml_read("http://harvardforest.fas.harvard.edu/data/eml/hf001.xml")
+eml_HARV <- eml_read("http://harvardforest.fas.harvard.edu/data/eml/hf001.xml")
 
 #view size of object
-object.size(obj)
+object.size(eml_HARV)
 
-#get list of measurements for the 4th data table in the EML file
-stuff <- obj@dataset@dataTable[[4]]@attributeList@attribute
-#the first column is the date field
-stuff[[1]]
-
-slotNames(stuff[1])
-
-#view the column name and description for the first column
-stuff[[1]]@attributeName
-stuff[[1]]@attributeDefinition
+#view the object class
+class(eml_HARV)
 
 ## ----view-eml-content----------------------------------------------------
 #view the contact name listed in the file
 #this works well!
-eml_get(obj,"contact")
+eml_get(eml_HARV,"contact")
 
 #grab all keywords in the file
-eml_get(obj,"keywords")
+eml_get(eml_HARV,"keywords")
 
 #figure out the extent & temporal coverage of the data
-eml_get(obj,"coverage")
+eml_get(eml_HARV,"coverage")
 
 
+## ----find-geographic-coverage--------------------------------------------
+#view geographic coverage
+eml_HARV@dataset@coverage@geographicCoverage
 
-## ----EML-Structure-------------------------------------------------------
 
-#How many data tables are described / included in this dataset?
-length(obj@dataset@dataTable)
+## ----map-location, warning=FALSE-----------------------------------------
+#
+XCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@westBoundingCoordinate
 
-#what are the names of those tables?
-data.paths <- eml_get(obj,"csv_filepaths")
+YCoord <- eml_HARV@dataset@coverage@geographicCoverage@boundingCoordinates@northBoundingCoordinate
 
-data.paths
 
-data.paths[4]
+library(ggmap)
+#map <- get_map(location='Harvard', maptype = "terrain")
+map <- get_map(location='massachusetts', maptype = "toner", zoom =8)
+
+#map <- get_map(location='massachusetts', maptype = "roadmap")
+
+ggmap(map, extent=TRUE) +
+  geom_point(aes(x=XCoord,y=YCoord), color="darkred",size=6, pch=18)
+
+
+## ----view-dataset-eml----------------------------------------------------
+
+#view dataset abstract (description)
+eml_HARV@dataset@abstract
+
 
 ## ----view-data-tables----------------------------------------------------
 
+
 #we can view the data table name and description as follows
-obj@dataset@dataTable[[1]]@entityName
-obj@dataset@dataTable[[1]]@entityDescription
+eml_HARV@dataset@dataTable[[1]]@entityName
+eml_HARV@dataset@dataTable[[1]]@entityDescription
 
 #create an object that just contains dataTable level attributes
-all.tables <- obj@dataset@dataTable
+all.tables <- eml_HARV@dataset@dataTable
 
 #use purrrr to generate a data.frame that contains the attrName and Def for each column
 dataTable.desc <- purrr::map_df(all.tables, 
               function(x) 
-                data.frame(attribute = x@entityName, 
-                                     description = x@entityDescription))
+              data.frame(attribute = x@entityName, 
+                        description = x@entityDescription))
+
 #view table descriptions
 dataTable.desc
+#how many rows (data tables) are in the list?
+nrow(dataTable.desc)
 
 
 ## ----data-table-attr-----------------------------------------------------
 
-#create an object that contains metadata for table 4 only
-month.avg.desc <- obj@dataset@dataTable[[4]]
+#create an object that contains metadata for table 8 only
+EML.hr.dataTable <- obj@dataset@dataTable[[8]]
 
 #Check out the table's name - make sure it's the right table!
-month.avg.desc@entityName
+EML.hr.dataTable@entityName
 
 #what information does this data table contain?
-month.avg.desc@entityDescription
+EML.hr.dataTable@entityDescription
 
 #how is the text file delimited?
-month.avg.desc@physical
+EML.hr.dataTable@physical
 
 #view table id
-month.avg.desc@id
+EML.hr.dataTable@id
 
 #this is the download URL for the file.
-month.avg.desc@physical@distribution@online@url
+EML.hr.dataTable@physical@distribution@online@url
+
+## ----view-15min-attr-list------------------------------------------------
+#get list of measurements for the 10th data table in the EML file
+EML.hr.attr <- EML.hr.dataTable@attributeList@attribute
+#the first column is the date field
+EML.hr.attr[[1]]
+
+#view the column name and description for the first column
+EML.hr.attr[[1]]@attributeName
+EML.hr.attr[[1]]@attributeDefinition
 
 ## ----view-monthly-attrs--------------------------------------------------
-
-#view attributes for the 4th data table - monthly average
-month.avg.desc@attributeList
-
-#create an object that only contains attribute values for the month av data
-month.avg.desc.attr <- month.avg.desc@attributeList
+#list of all attribute description and metadata
+#EML.15min.attr
 
 # use a split-apply-combine approach to parse the attribute data
 # and create a data.frame with only the attribute name and description
 
 #dplyr approach
-do.call(rbind, 
-        lapply(stuff, function(x) data.frame(column.name = x@attributeName, 
-                                             definition = x@attributeDefinition)))
+#do.call(rbind, 
+#        lapply(EML.15min.attr, function(x) data.frame(column.name = x@attributeName, 
+#                                             definition = x@attributeDefinition)))
 
 #use purrrr to generate a data.frame that contains the attrName and Def for each column
-tbl4.clms <- purrr::map_df(stuff, 
+EML.hr.attr.dt8 <- purrr::map_df(EML.hr.attr, 
               function(x) 
                 data.frame(attribute = x@attributeName, 
                                      description = x@attributeDefinition))
 
-head(tbl4.clms)
+EML.hr.attr.dt8
 
 ## ----download-data-------------------------------------------------------
 
 #tried to subset out the dataTable component of the eml obj
 dat <- eml_get(obj@dataset@dataTable[[4]], "data.frame")
 
+dat <- eml_get(EML.hr.dataTable@physical@distribution@online@url,
+               "data.frame")
+
 #in theory the code below should work but it throws a URL error
 library(RCurl)
-x <- getURL(data.paths[4])
+x <- getURL(EML.hr.dataTable@physical@distribution@online@url)
 y <- read.csv(text = x)
 
 #the url below does work, why can't R access it but my browser can?
@@ -140,49 +160,11 @@ y
 #http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
 
 
-## ----view-attr-list------------------------------------------------------
-#what are the attributes in the data?
-obj@dataset@dataTable[[4]]@attributeList
+## ----EML-Structure-------------------------------------------------------
+###THIS IS THE WRONG OUTPUT FOR SOME REASON??
+#what are the names of those tables?
+data.paths <- eml_get(obj,"csv_filepaths")
+data.paths
 
-#view one set of attributes - the first in the list
-obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]
-
-#for date fields i'd like to know the format and the timezone
-obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]@measurementScale
-obj@dataset@dataTable[[4]]@attributeList@attribute[[1]]@attributeName
-
-
-#view second attribute in the list - airt
-obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]
-
-#I am at the units with the string below
-#phew - long. what i really want is to be able to grab the unit programmatically
-obj@dataset@dataTable[[4]]@attributeList@attribute[[2]]@measurementScale
-
-
-## ----view-units----------------------------------------------------------
-
-
-## ----view-XML-YAML, results="hide"---------------------------------------
-#view all elements in YAML format
-#note - i've hidden the output as it's too long
-obj
-
-## ----download-data2------------------------------------------------------
-#download in all data that the eml references
-#store it in a data.frame format
-#dat <- eml_get(obj, "data.frame")
-
-
-## ----get-id--------------------------------------------------------------
-#not sure what this ID is
-eml_get(obj,"id")
-
-#not sure what this is doing either.
-eml = eml_read("knb-lter-hfr.205.4")
-
-eml@dataset@dataTable[[1]]@attributeList@attribute[[2]]
-
-obj@dataset@dataTable
-
+data.paths[4]
 
