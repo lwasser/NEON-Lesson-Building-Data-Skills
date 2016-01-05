@@ -1,13 +1,13 @@
 ---
 layout: post
 title: "Introduction to EML in R"
-date:   2015-12-28
+date:   2016-01-04
 authors: [Carl Boettiger, Leah A. Wasser]
 contributors: []
 dateCreated: 2015-12-28
-lastModified: 2015-12-29
-tags: [spatio-temporal, time-series, phenology]
-mainTag: time-series
+lastModified: 2016-01-05
+tags: [metadata-eml]
+mainTag: metadata-eml
 packagesLibraries: [eml]
 category: 
 description: "This lesson will walk through the basic purpose and structure of metadata stored
@@ -30,7 +30,37 @@ comments: false
 This lesson will walk through the basic purpose and structure of metadata stored
 in EML (Ecological Metadata Language) format. We will work with an EML file created
 for an atmospheric dataset by the Harvard Forest LTER, using the R/OpenSci EML
-library for `R`.
+library for `R`. The EML format can us used to document a suite of different
+objects including shapefiles & raster data (spatial data), software, hierarchical
+data sets and more. However in this lesson we will focus on an EML file that 
+documents a tablular data.
+
+##Introduction to EML
+The Ecological Metadata Language (EML) is a data specification developed specifically
+to document ecological data. An EML file is created using a `XML` based format.
+This means that content is embedded within hierarchical tags. For example
+the title of a dataset might be embedded in a `<title>` tag as follows:
+
+`<title>Fisher Meteorological Station at Harvard Forest since 2001</title>`
+
+Similarly, the creator of a dataset is also be found in a hierarchical tag
+structure.
+
+```
+<creator>
+  <individualName>
+    <givenName>Emery</givenName>
+    <surName>Boose</surName>
+  </individualName>
+</creator>
+```
+
+The `EML` package for `R` is designed to read and allow users to work with `EML`
+format metadata. In this lesson, we will overview the basics of how to access
+key metadata that we might need to understand, in order to work with a particular
+dataset.
+
+##Work With EML
 
 To begin, we will load the `EML`, `purrr` and `dplyr` libraries.
 
@@ -45,7 +75,22 @@ To begin, we will load the `EML`, `purrr` and `dplyr` libraries.
     library("EML")
     library("purrr")
     library("dplyr")
-    
+
+    ## 
+    ## Attaching package: 'dplyr'
+    ## 
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     order_by
+    ## 
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+    ## 
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
     #data location
     #http://harvardforest.fas.harvard.edu:8080/exist/apps/datasets/showData.html?id=hf001
     #table 4 http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
@@ -364,42 +409,33 @@ can explore its name, description, physical characteristics and identifier.
 
     #create an object that contains metadata for table 8 only
     EML.hr.dataTable <- obj@dataset@dataTable[[8]]
-    
+
+    ## Error in eval(expr, envir, enclos): object 'obj' not found
+
     #Check out the table's name - make sure it's the right table!
     EML.hr.dataTable@entityName
 
-    ## [1] "hf001-08-hourly-m.csv"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
     #what information does this data table contain?
     EML.hr.dataTable@entityDescription
 
-    ## [1] "hourly (metric) 2001-2004"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
     #how is the text file delimited?
     EML.hr.dataTable@physical
 
-    ## objectName: hf001-08-hourly-m.csv
-    ## dataFormat:
-    ##   textFormat:
-    ##     numHeaderLines: '1'
-    ##     recordDelimiter: \r\n
-    ##     attributeOrientation: column
-    ##     simpleDelimited:
-    ##       fieldDelimiter: ','
-    ## distribution:
-    ##   online:
-    ##     url: http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
     #view table id
     EML.hr.dataTable@id
 
-    ##         id 
-    ## "hf001-08"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
     #this is the download URL for the file.
     EML.hr.dataTable@physical@distribution@online@url
 
-    ## [1] "http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
 
 ##View Data Table Fields (attributes)
@@ -416,24 +452,22 @@ Let's explore the dataTable attributes
 
     #get list of measurements for the 10th data table in the EML file
     EML.hr.attr <- EML.hr.dataTable@attributeList@attribute
+
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
+
     #the first column is the date field
     EML.hr.attr[[1]]
 
-    ## attributeName: datetime
-    ## attributeDefinition: date and time at end of sampling period
-    ## measurementScale:
-    ##   dateTime:
-    ##     formatString: YYYY-MM-DDThh:mm
-    ## .attrs: '1184527243653'
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.attr' not found
 
     #view the column name and description for the first column
     EML.hr.attr[[1]]@attributeName
 
-    ## [1] "datetime"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.attr' not found
 
     EML.hr.attr[[1]]@attributeDefinition
 
-    ## [1] "date and time at end of sampling period"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.attr' not found
 
 
 #View All Data Table Attributes 
@@ -465,39 +499,21 @@ Let's do that next.
     EML.hr.attr.dt8 <- purrr::map_df(EML.hr.attr, 
                   function(x) data_frame(attribute = x@attributeName, 
                               description = x@attributeDefinition))
-    
+
+    ## Error in map(.x, .f, ...): object 'EML.hr.attr' not found
+
     EML.hr.attr.dt8
 
-    ## Source: local data frame [30 x 2]
-    ## 
-    ##    attribute
-    ##        (chr)
-    ## 1   datetime
-    ## 2         jd
-    ## 3       airt
-    ## 4     f.airt
-    ## 5         rh
-    ## 6       f.rh
-    ## 7       dewp
-    ## 8     f.dewp
-    ## 9       prec
-    ## 10    f.prec
-    ## ..       ...
-    ## Variables not shown: description (chr)
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.attr.dt8' not found
 
     #view first 6 rows for each column 
     head(EML.hr.attr.dt8$attribute)
 
-    ## [1] "datetime" "jd"       "airt"     "f.airt"   "rh"       "f.rh"
+    ## Error in head(EML.hr.attr.dt8$attribute): object 'EML.hr.attr.dt8' not found
 
     head(EML.hr.attr.dt8$description)
 
-    ## [1] "date and time at end of sampling period"                       
-    ## [2] "Julian day"                                                    
-    ## [3] "air temperature. Average of 1-second measurements."            
-    ## [4] "flag for air temperature"                                      
-    ## [5] "relative humidity. Average of 1-second measurements. (percent)"
-    ## [6] "flag for relative humidity"
+    ## Error in head(EML.hr.attr.dt8$description): object 'EML.hr.attr.dt8' not found
 
 From our data.frame generated above, we can see that this data table contains 
 air temperature and precipitation - two key drivers of phenology. 
@@ -526,60 +542,22 @@ table into a `dplyr data_frame`.
     #view url
     EML.hr.dataTable@physical@distribution@online@url
 
-    ## [1] "http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv"
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
     #Read in csv (data table 8)
     month.avg.m.HARV <- read.csv(EML.hr.dataTable@physical@distribution@online@url,
                                  stringsAsFactors = FALSE)
-    
+
+    ## Error in read.table(file = file, header = header, sep = sep, quote = quote, : object 'EML.hr.dataTable' not found
+
     str(month.avg.m.HARV)
 
-    ## 'data.frame':	34080 obs. of  30 variables:
-    ##  $ datetime: chr  "2001-02-11T01:00" "2001-02-11T02:00" "2001-02-11T03:00" "2001-02-11T04:00" ...
-    ##  $ jd      : int  42 42 42 42 42 42 42 42 42 42 ...
-    ##  $ airt    : num  -9.6 -10.2 -10.6 -11 -11.4 -12.1 -12.9 -13.2 -12.4 -11.1 ...
-    ##  $ f.airt  : chr  "" "" "" "" ...
-    ##  $ rh      : int  54 54 51 51 50 49 53 54 49 42 ...
-    ##  $ f.rh    : chr  "" "" "" "" ...
-    ##  $ dewp    : num  -17.3 -17.7 -18.8 -19.1 -19.7 -20.6 -20.5 -20.6 -21 -21.5 ...
-    ##  $ f.dewp  : chr  "" "" "" "" ...
-    ##  $ prec    : num  0 0 0 0 0 0 0 0 0 0 ...
-    ##  $ f.prec  : chr  "" "" "" "" ...
-    ##  $ slrr    : int  0 0 0 0 0 0 2 71 285 454 ...
-    ##  $ f.slrr  : chr  "" "" "" "" ...
-    ##  $ parr    : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ f.parr  : chr  "M" "M" "M" "M" ...
-    ##  $ netr    : int  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ f.netr  : chr  "M" "M" "M" "M" ...
-    ##  $ bar     : int  1017 1018 1019 1019 1020 1021 1022 1023 1024 1024 ...
-    ##  $ f.bar   : chr  "" "" "" "" ...
-    ##  $ wspd    : num  3.4 2.9 3.5 3.3 3.6 3.9 3.5 3.2 3.8 3.5 ...
-    ##  $ f.wspd  : chr  "" "" "" "" ...
-    ##  $ wres    : num  3.1 2.7 3.2 3 3.4 3.7 3.3 3 3.5 3.2 ...
-    ##  $ f.wres  : chr  "" "" "" "" ...
-    ##  $ wdir    : int  282 274 279 281 278 278 277 279 281 284 ...
-    ##  $ f.wdir  : chr  "" "" "" "" ...
-    ##  $ wdev    : int  21 22 23 24 22 21 20 21 23 26 ...
-    ##  $ f.wdev  : chr  "" "" "" "" ...
-    ##  $ gspd    : num  9.6 7.8 15.4 9.5 12.2 11 9.3 8.6 9.8 12.8 ...
-    ##  $ f.gspd  : chr  "" "" "" "" ...
-    ##  $ s10t    : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ f.s10t  : chr  "M" "M" "M" "M" ...
+    ## Error in str(month.avg.m.HARV): object 'month.avg.m.HARV' not found
 
     # view table structure
     EML.hr.dataTable@physical
 
-    ## objectName: hf001-08-hourly-m.csv
-    ## dataFormat:
-    ##   textFormat:
-    ##     numHeaderLines: '1'
-    ##     recordDelimiter: \r\n
-    ##     attributeOrientation: column
-    ##     simpleDelimited:
-    ##       fieldDelimiter: ','
-    ## distribution:
-    ##   online:
-    ##     url: http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv
+    ## Error in eval(expr, envir, enclos): object 'EML.hr.dataTable' not found
 
 We are now ready to work with the data!
 
@@ -607,23 +585,16 @@ some of the questions above. Why?
     ###THIS IS THE WRONG OUTPUT FOR SOME REASON??
     #what are the names of those tables?
     data.paths <- eml_get(obj,"csv_filepaths")
+
+    ## Error in is(eml, "eml"): object 'obj' not found
+
     data.paths
 
-    ##  [1] "http://harvardforest.fas.harvard.edu/data/eml/hf001-01-station-log.csv"
-    ##  [2] "http://harvardforest.fas.harvard.edu/data/eml/hf001-02-annual-m.csv"   
-    ##  [3] "http://harvardforest.fas.harvard.edu/data/eml/hf001-03-annual-e.csv"   
-    ##  [4] "http://harvardforest.fas.harvard.edu/data/eml/hf001-04-monthly-m.csv"  
-    ##  [5] "http://harvardforest.fas.harvard.edu/data/eml/hf001-05-monthly-e.csv"  
-    ##  [6] "http://harvardforest.fas.harvard.edu/data/eml/hf001-06-daily-m.csv"    
-    ##  [7] "http://harvardforest.fas.harvard.edu/data/eml/hf001-07-daily-e.csv"    
-    ##  [8] "http://harvardforest.fas.harvard.edu/data/eml/hf001-08-hourly-m.csv"   
-    ##  [9] "http://harvardforest.fas.harvard.edu/data/eml/hf001-09-hourly-e.csv"   
-    ## [10] "http://harvardforest.fas.harvard.edu/data/eml/hf001-10-15min-m.csv"    
-    ## [11] "http://harvardforest.fas.harvard.edu/data/eml/hf001-11-15min-e.csv"
+    ## Error in eval(expr, envir, enclos): object 'data.paths' not found
 
     data.paths[4]
 
-    ## [1] "http://harvardforest.fas.harvard.edu/data/eml/hf001-04-monthly-m.csv"
+    ## Error in eval(expr, envir, enclos): object 'data.paths' not found
 
 
 

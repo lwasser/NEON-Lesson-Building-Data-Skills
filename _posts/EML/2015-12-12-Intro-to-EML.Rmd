@@ -1,13 +1,13 @@
 ---
 layout: post
 title: "Introduction to EML in R"
-date:   2015-12-28
+date:   2016-01-04
 authors: [Carl Boettiger, Leah A. Wasser]
 contributors: []
 dateCreated: 2015-12-28
 lastModified: `r format(Sys.time(), "%Y-%m-%d")`
-tags: [spatio-temporal, time-series, phenology]
-mainTag: time-series
+tags: [metadata-eml]
+mainTag: metadata-eml
 packagesLibraries: [eml]
 category: 
 description: "This lesson will walk through the basic purpose and structure of metadata stored
@@ -30,7 +30,37 @@ comments: false
 This lesson will walk through the basic purpose and structure of metadata stored
 in EML (Ecological Metadata Language) format. We will work with an EML file created
 for an atmospheric dataset by the Harvard Forest LTER, using the R/OpenSci EML
-library for `R`.
+library for `R`. The EML format can us used to document a suite of different
+objects including shapefiles & raster data (spatial data), software, hierarchical
+data sets and more. However in this lesson we will focus on an EML file that 
+documents a tablular data.
+
+##Introduction to EML
+The Ecological Metadata Language (EML) is a data specification developed specifically
+to document ecological data. An EML file is created using a `XML` based format.
+This means that content is embedded within hierarchical tags. For example
+the title of a dataset might be embedded in a `<title>` tag as follows:
+
+`<title>Fisher Meteorological Station at Harvard Forest since 2001</title>`
+
+Similarly, the creator of a dataset is also be found in a hierarchical tag
+structure.
+
+```
+<creator>
+  <individualName>
+    <givenName>Emery</givenName>
+    <surName>Boose</surName>
+  </individualName>
+</creator>
+```
+
+The `EML` package for `R` is designed to read and allow users to work with `EML`
+format metadata. In this lesson, we will overview the basics of how to access
+key metadata that we might need to understand, in order to work with a particular
+dataset.
+
+##Work With EML
 
 To begin, we will load the `EML`, `purrr` and `dplyr` libraries.
 
