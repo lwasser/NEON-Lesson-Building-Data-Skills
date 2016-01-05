@@ -47,12 +47,14 @@ Similarly, the creator of a dataset is also be found in a hierarchical tag
 structure.
 
 <code>
-<creator>
-  <individualName>
-    <givenName>Emery</givenName>
-    <surName>Boose</surName>
-  </individualName>
-</creator>
+
+	<creator>
+		  <individualName>
+		    <givenName>Emery</givenName>
+		    <surName>Boose</surName>
+		  </individualName>
+	</creator>
+
 </code>
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
