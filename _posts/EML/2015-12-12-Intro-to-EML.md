@@ -46,14 +46,14 @@ the title of a dataset might be embedded in a `<title>` tag as follows:
 Similarly, the creator of a dataset is also be found in a hierarchical tag
 structure.
 
-```
+<code>
 <creator>
   <individualName>
     <givenName>Emery</givenName>
     <surName>Boose</surName>
   </individualName>
 </creator>
-```
+</code>
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
 format metadata. In this lesson, we will overview the basics of how to access
@@ -75,22 +75,7 @@ To begin, we will load the `EML`, `purrr` and `dplyr` libraries.
     library("EML")
     library("purrr")
     library("dplyr")
-
-    ## 
-    ## Attaching package: 'dplyr'
-    ## 
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     order_by
-    ## 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-    ## 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
+    
     #data location
     #http://harvardforest.fas.harvard.edu:8080/exist/apps/datasets/showData.html?id=hf001
     #table 4 http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-04-monthly-m.csv
