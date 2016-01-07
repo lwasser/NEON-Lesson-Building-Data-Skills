@@ -57,12 +57,13 @@ NOTE: EML BELOW WITH CODE TAGS
 </code></pre>
 
 NOTE: EML BELOW JUST INDENTED
-<creator>
-  <individualName>
-    <givenName>Emery</givenName>
-    <surName>Boose</surName>
-  </individualName>
-</creator>
+
+    <creator>
+      <individualName>
+        <givenName>Emery</givenName>
+        <surName>Boose</surName>
+      </individualName>
+    </creator>
 
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
