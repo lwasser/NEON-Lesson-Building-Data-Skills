@@ -46,16 +46,24 @@ the title of a dataset might be embedded in a `<title>` tag as follows:
 Similarly, the creator of a dataset is also be found in a hierarchical tag
 structure.
 
-<code>
-
+NOTE: EML BELOW WITH CODE TAGS
+<pre><code class="xml">
 	<creator>
 		  <individualName>
 		    <givenName>Emery</givenName>
 		    <surName>Boose</surName>
 		  </individualName>
 	</creator>
+</code></pre>
 
-</code>
+NOTE: EML BELOW JUST INDENTED
+<creator>
+  <individualName>
+    <givenName>Emery</givenName>
+    <surName>Boose</surName>
+  </individualName>
+</creator>
+
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
 format metadata. In this lesson, we will overview the basics of how to access
