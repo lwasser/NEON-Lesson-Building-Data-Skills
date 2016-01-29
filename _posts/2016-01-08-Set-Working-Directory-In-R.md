@@ -18,7 +18,7 @@ image:
   feature: coding_R.png
   credit: National Ecological Observatory Network (NEON).
   creditlink: http://www.neoninc.org
-permalink: /R/Set-Working-Directory/
+permalink: /R/Set-Working-Directory
 comments: false
 ---
 
@@ -87,12 +87,12 @@ Skills tutorials download all data subsets in the **Download Data** section
 prior to starting the lesson.  
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/download-data-screenshot.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/download-data-screenshot.png"></a>
-	<figcaption> Screenshot of the <b>Download Data </b> button at the top of 
-	NEON Data Skills tutorials. Source: National Ecological Observatory Network
-	(NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/download-data-screenshot.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/download-data-screenshot.png"></a>
+	 <figcaption> Screenshot of the <b>Download Data </b> button at the top of 
+	 NEON Data Skills tutorials. Source: National Ecological Observatory Network
+	 (NEON)  
+	 </figcaption>
 </figure> 
 
 After clicking on the "Download Data" button, the data will automatically 
@@ -104,12 +104,12 @@ Note: You may have previously specified a specific directory (folder) for files
 downloaded from the internet, if so, the .zip file will download there.
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/downloads_folder.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/downloads_folder.png"></a>
-	<figcaption> Screenshot of the computer's Downloads folder containing the
-	new <b>NEONDSMetTimeSeries.zip </b> file. Source: National Ecological
-	Observatory Network (NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/downloads_folder.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/downloads_folder.png"></a>
+	 <figcaption> Screenshot of the computer's Downloads folder containing the
+	 new <b>NEONDSMetTimeSeries.zip </b> file. Source: National Ecological
+	 Observatory Network (NEON)  
+	 </figcaption>
 </figure> 
 
 Third, we must move the data files to the location we want to work with them.  
@@ -149,13 +149,13 @@ path**).
 ###Base Paths & Relative Paths
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/mjones01-documents-contents.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/mjones01-documents-contents.png"></a>
-	<figcaption> Screenshot of the <b>neon</b> directory with the nested 
-	<b>Documents</b>, <b>data</b>, <b>NEON-DS-Met-Time-Series</b>, and other 
-	directories. Source: National Ecological Observatory Network
-	(NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/neon-documents-contents.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/neon-documents-contents.png"></a>
+	 <figcaption> Screenshot of the <b>neon</b> directory with the nested 
+	 <b>Documents</b>, <b>data</b>, <b>NEON-DS-Met-Time-Series</b>, and other 
+	 directories. Source: National Ecological Observatory Network
+	 (NEON)  
+	 </figcaption>
 </figure> 
 
 The data downloaded and unzipped in the previous steps are located within a 
@@ -171,26 +171,27 @@ nested set of directories:
  * quaternary-level directory:    NEON-DS-Site-Layout-Shapefiles 
 
 ####Base Path
-The full path is essentially the full "directions" for how to find the desired
-directory or file.  It **always** starts with the home directory. A **full path**
-can be a **base path** when used to set the working directory to a specific 
-directory. The base path for the `NEON-DS-Met-Time-Series` directory would be:
+The **full path** is essentially the full "directions" for how to find the desired
+directory or file. It **always** starts with the home directory 
+(e.g., `/Users/neon/`). A full path is the **base path** when used to set 
+the working directory to a specific directory. The base path for the
+ `NEON-DS-Met-Time-Series` directory would be:
 
 	 /Users/neon/Documents/data/NEON-DS-Met-Time-Series 
 
 
 <i class="fa fa-star"></i> **Data Tip:** Pathways and the home directory in 
-different operating systems will appear slightly different. 
-On Linux the path may start `/home/neon/`, on Windows it may be similar to
-`C:\Documents and Settings\neon\` or `C:\Users\neon\` (varies by Windows
-version), or on Mac OS X it will appear `/Users/neon/`.  If you are working in a
-Windows platform, make special note of the direction of the slashes in file 
-paths on Windows platforms. This tutorial will show Mac OS X output.  
+different operating systems will appear slightly different. Linux will appear as
+ `/home/neon/`, Windows will be similar to `C:\Documents and Settings\neon\` or
+ `C:\Users\neon\`. The format varies by Windows version. Make special note of 
+the direction of the slashes. Mac OS X and Unix format will appear as
+ `/Users/neon/`. This tutorial will show Mac OS X output unless specifically
+noted.  
 {: .notice}
 
 <div id="challenge" markdown="1">
-##Challenge: Base File Path
-Write out the base path for the `NEON-DS-Site-Layout-Shapefiles` directory.  Use
+##Challenge: Full File Path
+Write out the full path for the `NEON-DS-Site-Layout-Shapefiles` directory.  Use
 the format of the computer you are currently using.  
 
 Bonus: Write the path in a Linux format (if you are currently using Linux, 
@@ -204,16 +205,16 @@ to the **data** directory,
 
 	 /Users/neon/Documents/data/
 
-we can then create a relative path for all directories and  files within the
+we can then create a relative path for all directories and files within the
 **data** directory. 
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/data-folder-contents.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/data-folder-contents.png"></a>
-	<figcaption> Screenshot of the data directory containing the both NEON Data 
-	Skills Teaching Subsets. Source: National Ecological Observatory Network
-	(NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/data-folder-contents.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/data-folder-contents.png"></a>
+	 <figcaption> Screenshot of the data directory containing the both NEON Data 
+	 Skills Teaching Subsets. Source: National Ecological Observatory Network
+	 (NEON)  
+	 </figcaption>
 </figure> 
 
 The relative path for the `meanNDVI_HARV_2011.csv` file would be: 
@@ -233,16 +234,21 @@ Bonus: Write both paths using an alternate operating system format.
 
 ###Find a Full Path to File in Unknown Location
 If you are unsure of the path to a specific directory or file, you can
-find out by right clicking (Mac: control+click) on the file/directory of interest
-and select "Properties" or "Get Info". The location information will appear 
-as something like: 
+find this information for a particular file/directory of interest by looking in 
+the:
+
+* Windows:  **Properties**/ General tab (right click on the file/directory) or in the file 
+path bar at the top of each window (select versions). 
+* Mac: **Get Info**  (right clicking/ control+click on the file/directory)
+
+The file path may appear as: 
 
 Computer > Users > neon > Documents > data > NEON-DS-Met-Time-Series
 
-If you copy and paste this information, it automatically reformats into the base 
+Copy and paste this information to automatically reformat into the base 
 path to the directory or file: 
 
-Windows:    C:\\Users\neon\Documents\data\NEON-DS-Met-Time-Series\
+Windows:    C:\Users\neon\Documents\data\NEON-DS-Met-Time-Series\
 
 Mac OS X:   /Users/neon/Documents/data/NEON-DS-Met-Time-Series
 
@@ -300,12 +306,12 @@ directory is correctly set we can use `getwd()`.
 Once set you can view the contents of the working directory in the files tab 
 in RStudio. 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/RStudio-working-directory.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/RStudio-working-directory.png"></a>
-	<figcaption> The Files tab in RStudio shows the contents of the current
-	working directory.  Source: National Ecological Observatory Network
-	(NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/RStudio-working-directory.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/RStudio-working-directory.png"></a>
+	 <figcaption> The Files tab in RStudio shows the contents of the current
+	 working directory.  Source: National Ecological Observatory Network
+	 (NEON)  
+	 </figcaption>
 </figure> 
 
 
@@ -318,11 +324,11 @@ To use the RStudio GUI to set the working directory:
 4. in the new window that appears, select the appropriate directory. 
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/RStudio-GUI-setWD.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/RStudio-GUI-setWD.png"></a>
-	<figcaption> How to set the working directory using the RStudio GUI.
-	Source: National Ecological Observatory Network (NEON)  
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/RStudio-GUI-setWD.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/RStudio-GUI-setWD.png"></a>
+	 <figcaption> How to set the working directory using the RStudio GUI.
+	 Source: National Ecological Observatory Network (NEON)  
+	 </figcaption>
 </figure> 
 
 
@@ -331,15 +337,15 @@ To use the RStudio GUI to set the working directory:
 ####Windows Operating Systems: 
 
 1. go to the `File` menu bar,
-2. select `Change Working Directory`,
+2. select `Change dir...` or `Change Working Directory`,
 3. in the new window that appears, select the appropriate directory.
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/Windows-RGUI-setWD.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/Window-RGUI-setWD.png"></a>
-	<figcaption> How to set the working directory using the R GUI in Windows.
-	Source: National Ecological Observatory Network (NEON) 
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/Windows-RGUI-setWD.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/Window-RGUI-setWD.png"></a>
+	 <figcaption> How to set the working directory using the R GUI in Windows.
+	 Source: National Ecological Observatory Network (NEON) 
+	 </figcaption>
 </figure> 
 
 ####Mac Operating Systems:
@@ -349,9 +355,9 @@ To use the RStudio GUI to set the working directory:
 3. in the new window that appears, select the appropriate directory.
 
 <figure>
-	<a href="{ site.baseurl }}/images/set-working-dir/Mac-RGUI-setWD.png">
-	<img src="{ site.baseurl }}/images/set-working-dir/Mac-RGUI-setWD.png"></a>
-	<figcaption> How to set the working directory using the R GUI in Mac OS X. 
-	Source: National Ecological Observatory Network (NEON)   
-	</figcaption>
+	 <a href="{ site.baseurl }}/images/set-working-dir/Mac-RGUI-setWD.png">
+	 <img src="{ site.baseurl }}/images/set-working-dir/Mac-RGUI-setWD.png"></a>
+	 <figcaption> How to set the working directory using the R GUI in Mac OS X. 
+	 Source: National Ecological Observatory Network (NEON)   
+	 </figcaption>
 </figure> 
