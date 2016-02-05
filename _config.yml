@@ -63,20 +63,8 @@ future:      true
 #highlighter: pygments
 markdown:    kramdown
 #markdown: redcarpet
-redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
-
-
-# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:    America/Denver
-future:      true
-# turning off pygments for the time being
-#pygments:    true
-#highlighter: pygments
-markdown:    kramdown
-#markdown: redcarpet
-redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+#redcarpet:
+#  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
 
 
 # https://github.com/mojombo/jekyll/wiki/Permalinks
