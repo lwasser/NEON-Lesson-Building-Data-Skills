@@ -8,7 +8,7 @@ dateCreated: 2015-12-28
 lastModified: `r format(Sys.time(), "%Y-%m-%d")`
 tags: [metadata-eml]
 mainTag: metadata-eml
-packagesLibraries: [eml]
+packagesLibraries: [eml, purr, dplyr]
 category: 
 description: "This lesson will walk through the basic purpose and structure of metadata stored
 in EML (Ecological Metadata Language) format. We will work with an EML file created
@@ -16,9 +16,9 @@ for an atmospheric dataset by the Harvard Forest LTER, using the R/OpenSci EML
 library for R."
 code1: 
 image:
-  feature: NEONCarpentryHeader_2.png
-  credit: A collaboration between the National Ecological Observatory Network (NEON) and Data Carpentry
-  creditlink: http://www.neoninc.org
+  feature: TeachingModules.jpg
+  credit: 
+  creditlink: 
 permalink: /R/EML
 comments: false
 ---
@@ -46,14 +46,14 @@ the title of a dataset might be embedded in a `<title>` tag as follows:
 Similarly, the creator of a dataset is also be found in a hierarchical tag
 structure.
 
-<code>
-<creator>
-  <individualName>
-    <givenName>Emery</givenName>
-    <surName>Boose</surName>
-  </individualName>
-</creator>
-</code>
+
+    <creator>
+      <individualName>
+        <givenName>Emery</givenName>
+        <surName>Boose</surName>
+      </individualName>
+    </creator>
+    
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
 format metadata. In this lesson, we will overview the basics of how to access
@@ -288,7 +288,7 @@ can explore its name, description, physical characteristics and identifier.
 ```{r data-table-attr }
 
 #create an object that contains metadata for table 8 only
-EML.hr.dataTable <- obj@dataset@dataTable[[8]]
+EML.hr.dataTable <- eml_HARV@dataset@dataTable[[8]]
 
 #Check out the table's name - make sure it's the right table!
 EML.hr.dataTable@entityName

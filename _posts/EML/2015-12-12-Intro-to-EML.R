@@ -98,7 +98,7 @@ nrow(dataTable.desc)
 ## ----data-table-attr-----------------------------------------------------
 
 #create an object that contains metadata for table 8 only
-EML.hr.dataTable <- obj@dataset@dataTable[[8]]
+EML.hr.dataTable <- eml_HARV@dataset@dataTable[[8]]
 
 #Check out the table's name - make sure it's the right table!
 EML.hr.dataTable@entityName
