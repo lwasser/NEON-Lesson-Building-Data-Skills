@@ -24,7 +24,7 @@ comments: false
 
 {% include _toc.html %}
 
-##About
+## About
 This tutorial explains how to set a working directory in `R`. The working 
 directory points to a directory or folder on the computer where data that you 
 wish to work with in `R` is stored.
@@ -53,7 +53,7 @@ preferably, RStudio loaded on your computer.
 
 </div>
 
-##NEON Data Skills Tutorials
+## NEON Data Skills Tutorials
 Many NEON self-paced tutorials, available through the 
 [NEON Data Skills portal](http://www.NEONdataskills.org  "NEON Data Skills Portal"),
 utilize teaching data subsets which are hosted on the NEON Data Skills 
@@ -77,7 +77,7 @@ are telling the computer which directory (or folder) to start with when looking
 for other files or directories, or to save any output to.  
 {: .notice}
 
-##Download the Data
+## Download the Data
 First, we will download the data to a location on the computer. To download the 
 data for this tutorial, select the blue button **Download NEON Teaching Data 
 Subset: Meteorological Data for Harvard Forest**.  Note: In other NEON Data
@@ -132,7 +132,7 @@ are accessible and ready to be opened in`R`.
 Now that we have our data in an accessible format, we can move into `R` to set
 the working directory. 
 
-##The R Working Directory
+## The R Working Directory
 In `R`, the working directory is the directory where `R` starts when looking for 
 any file to open (as directed by a file path) and where it save the output.  
 Why do we want to do this?  
@@ -167,7 +167,7 @@ nested set of directories:
  * quaternary-level directory:    **NEON-DS-Met-Time-Series**
  * quaternary-level directory:    **NEON-DS-Site-Layout-Shapefiles** 
 
-####Full & Base Paths
+#### Full & Base Paths
 The **full path** is essentially the complete "directions" for how to find the 
 desired directory or file. It **always** starts with the home directory 
 (e.g., `/Users/neon/`). A full path is the **base path** when used to set 
@@ -194,7 +194,7 @@ the format of the operating system you are currently using.
 Bonus: Write the path as for one of the other operating systems. 
 </div>
 
-####Relative Path
+#### Relative Path
 A relative path is a path to a directory or file that is starts from the
 location determined by the working directory. If our working directory is set
 to the **data** directory,
@@ -228,7 +228,7 @@ assuming that the working directory is set to `/Users/neon/Documents/data/`.
 Bonus: Write the paths as for one of the other operating systems. 
 </div>
 
-###Find a Full Path to a File in Unknown Location
+### Find a Full Path to a File in Unknown Location
 If you are unsure of the path to a specific directory or file, you can
 find this information for a particular file/directory of interest by looking in 
 the:
@@ -247,7 +247,7 @@ path to the directory or file:
 * Windows:    `C:\Users\neon\Documents\data\NEON-DS-Met-Time-Series`
 * Mac OS X:   `/Users/neon/Documents/data/NEON-DS-Met-Time-Series`
 
-###Determine Current Working Directory
+### Determine Current Working Directory
 Once we are in the `R` program, we can view the current working directory
 using the code `getwd()`.  
 
@@ -261,7 +261,7 @@ appear different based on operating system.
 
 This code can be used at any time to determine the current working directory.  
 
-##Set the Working Directory
+## Set the Working Directory
 To set our current working directory to the location where our data are located,
 we can either set the working directory in the `R` script or use our current GUI
 to select the working directory.
@@ -274,7 +274,7 @@ subsets to be accessed in the tutorial without resetting the working directory.
 
 We want to set our working directory to the **data** directory.
 
-###Set the Working Directory: Base Path in Script
+### Set the Working Directory: Base Path in Script
 We can set the working directory using the code `setwd("PATH")` where PATH is 
 the file path to the desired directory.  
 
@@ -282,7 +282,7 @@ Now, set your working directory to the directory where you have the data saved.
 There is no `R` output from `setwd()`. If we want to check that the working
 directory is correctly set we can use `getwd()`.
  
-####Example Windows File Path
+#### Example Windows File Path
 Notice the the backslashes used in Windows paths must be changed to slashes in
 `R`. 
 
@@ -293,7 +293,7 @@ Notice the the backslashes used in Windows paths must be changed to slashes in
 	getwd()
 	[1] "C:/Users/neon/Documents/data"
 
-####Example Mac OS X File Path
+#### Example Mac OS X File Path
 	# set the working directory to `data` folder
 	setwd("/Users/neon/Documents/data")
 
@@ -315,7 +315,7 @@ contents of the working directory in the Files pane.
 </figure> 
 
 
-###Set the Working Directory: Using RStudio GUI
+### Set the Working Directory: Using RStudio GUI
 
 1. Go to `Session` in menu bar,
 2. select `Select Working Directory`,
@@ -331,9 +331,9 @@ contents of the working directory in the Files pane.
 </figure> 
 
 
-###Set the Working Directory: Using R GUI
+### Set the Working Directory: Using R GUI
 
-####Windows Operating Systems: 
+#### Windows Operating Systems: 
 
 1. Go to the `File` menu bar,
 2. select `Change dir...` or `Change Working Directory`,
@@ -347,7 +347,7 @@ contents of the working directory in the Files pane.
 	 </figcaption>
 </figure> 
 
-####Mac Operating Systems:
+#### Mac Operating Systems:
 
 1. Go to the `Misc` menu, 
 2. select `Change Working Directory`,
