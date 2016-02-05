@@ -34,27 +34,27 @@ google_analytics:
 # https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
 #bing_verify:        D81F4C18A6CB3018F64D7C827D953DFD
 
-category: [using lidar data, working with field data, zcarbon links]
-categories: [using lidar data, working with field data, zcarbon links]
+#category: [using lidar data, working with field data, zcarbon links]
+#categories: [using lidar data, working with field data, zcarbon links]
 # Links to include in top navigation
 # For external links add external: true
 links:  
-  - title: Data Tutorials
-    url: /activities/
-  
-  - title: About
-    url: /about/
+  - title: Self-Paced Data Tutorials
+    url: /self-paced-tutorial/   
 
   - title: Data Workshops
-    url: /Data-Workshops/
-    
-  - title: R & Python Cheatsheets
-    url: /cheatsheets/
+    url: /data-workshop/
+
+  - title: Science Videos
+    url: /science-video/ 
+        
+  - title: About
+    url: /about/ 
     
   - title: NEON Website
     url: http://neoninc.org
     external: true
-
+    
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    America/Denver
 future:      true
