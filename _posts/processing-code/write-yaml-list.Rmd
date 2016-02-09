@@ -1,0 +1,89 @@
+---
+title: "YAML"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+### This code reads through a set of files and parses out the YAML tags
+### It then builds a yml list
+### holy sweet awesomeness batman!
+library(readr)
+library(yaml)
+library(dplyr)
+#avoid strings becoming factors
+options(stringsAsFactors = FALSE)
+#first grab all files from the working dir
+setwd("~/Documents/GitHub/NEON-Data-Skills/_posts")
+all.md.files <- list.files(pattern = ".md", recursive = TRUE)
+#setwd("~/Documents/GitHub/NEON-DataSkills-Lesson-Development/_posts/EML")
+#file <- "2015-12-12-Intro-to-EML.md"
+final.df <- as.data.frame(matrix(0, ncol = 2, nrow = 0))
+for (file in all.md.files) {
+#read in first 20 lines
+a <- read_lines(file, 20)
+#find the line that contains "packagesLibraries"
+b <- a[grep("packagesLibraries", a) ]
+#if the element is empty, move on to the next
+if (is.na(b[1])) {
+print("no libraries, moving on")
+} else {
+#replace a few things
+c <- gsub(pattern = "packagesLibraries:", x=b, replacement = "" )
+c <- gsub(pattern = "\\]",x=c, replacement = "" )
+c <- gsub(pattern = "\\[", x=c, replacement = "" )
+#remove any extra spaces
+c <- gsub(pattern = " ", x=c, replacement = "" )
+#next parse out the various libraries
+d <- data.frame(unlist(strsplit(c,',')))
+names(d) <- "slug"
+d$name <- d$slug
+if (nrow(final.df)==0) {
+final.df <- d
+} else {
+final.df <- rbind(d, final.df)
+}
+print(d)
+print(final.df)
+}
+print(file)
+print(b)
+}
+# extract just unique values from the df
+final.df.unique <- unique(final.df)
+#order alphabetically
+final.df.unique <- arrange(final.df.unique, slug)
+#generate YAML list
+finalYAML <- yaml::as.yaml(final.df.unique, column.major = FALSE)
+#print YAML output just to look at
+cat(finalYAML, "\n")
+fileConn<-file("packagesLibraries.yml")
+writeLines(finalYAML, fileConn)
+close(fileConn)
+final.df
+
+c
+b
+b  <- "packagesLibraries: [one,two,three]"
+b  <- "packagesLibraries: [one,two,three]"
+c <- gsub(pattern = "packagesLibraries:", x=b, replacement = "" )
+c
+b  <- "packagesLibraries: [one,two,three]"
+c <- gsub(pattern = "packagesLibraries:|//]", x=b, replacement = "" )
+c
+b  <- "packagesLibraries: [one,two,three]"
+c <- gsub(pattern = "packagesLibraries:|//]", x=b, replacement = "" )
+c
+
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
