@@ -121,11 +121,27 @@ appropriate file path to your **data** directory.
 
 Fourth, we need to unzip/uncompress the file so that the data files can be 
 accessed. Use your favorite tool that can unpackage/open .zip files (e.g.,
-winzip, Archive Utility, etc). The files will now be accessible in a folder 
-named `NEON-DS-Met-Time-Series`. 
+winzip, Archive Utility, etc). The files will now be accessible in a directory 
+named `NEON-DS-Met-Time-Series` containing all the subdirectories and files that
+ make up the data set or the subdirectories and files will be unzipped directly 
+into the data directory. If the latter happens, they need to be moved into a 
+`data/NEON-DS-Met-Time-Series` directory.
+
+The directory should look like this: 
+
+<figure>
+	 <a href="{{ site.baseurl }}/images/set-working-dir/neon-documents-contents.png">
+	 <img src="{{ site.baseurl }}/images/set-working-dir/neon-documents-contents.png"></a>
+	 <figcaption> Screenshot of the <b>neon</b> directory with the nested 
+	 <b>Documents</b>, <b>data</b>, <b>NEON-DS-Met-Time-Series</b>, and other 
+	 directories. Source: National Ecological Observatory Network
+	 (NEON) 
+	 </figcaption>
+</figure> 
+
 
 <div id="challenge" markdown="1">
-##Challenge: Download and Unzip Teaching Data Subset
+## Challenge: Download and Unzip Teaching Data Subset
 Prepare the **Site Layout Shapefiles Teaching Data Subset** so that the files
 are accessible and ready to be opened in`R`. 
 </div>
@@ -188,7 +204,7 @@ noted.
 {: .notice}
 
 <div id="challenge" markdown="1">
-##Challenge: Full File Path
+## Challenge: Full File Path
 Write out the full path for the `NEON-DS-Site-Layout-Shapefiles` directory. Use
 the format of the operating system you are currently using. 
 
@@ -219,7 +235,7 @@ The relative path for the `meanNDVI_HARV_2011.csv` file would be:
 	 NEON-DS-Met-Time-Series/HARV/NDVI/meanNDVI_HARV_2011.csv
 
 <div id="challenge" markdown="1">
-##Challenge: Relative File Path
+## Challenge: Relative File Path
 Use the format of your current operating system:
 
 1. Write out the **full path** to for the `Boundary-US-State-Mass.shp` file. 
