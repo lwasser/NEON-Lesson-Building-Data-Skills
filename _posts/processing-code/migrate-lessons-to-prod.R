@@ -6,17 +6,20 @@
 # 3. it moves all md files from the data-lessons posts dir to the same location in the prod repo
 
 #Inputs - Where the base files are on your computer
-#basePath <-"~/Documents/GitHub/NEON-R-Spatial-Vector/"
-basePath <-"~/Documents/GitHub/NEON-R-Spatial-Raster/"
+basePath <-"~/Documents/GitHub/NEON-R-Spatial-Vector/"
+#basePath <-"~/Documents/GitHub/NEON-R-Spatial-Raster/"
+#posts_path <- "_posts/R/dc-spatial-raster"
 #basePath <-"~/Documents/GitHub/NEON-R-Tabular-Time-Series/"
 
 
 #this is where you want to move files to
-#prodPath <-"~/Documents/GitHub/NEON-R-Spatial-Vector/"
-prodPath <-"~/Documents/GitHub/deleteMe/"
+#prodPath <-"~/Documents/GitHub/NEON-Data-Skills-Development/"
+prodPath <-"~/Documents/GitHub/NEON-Data-Skills/"
+#prodPath <-"~/Documents/GitHub/deleteMe/"
 
 #get subdir in _posts
-#NOTE: this assums there is only one
+#NOTE: this assumes there is only one set of posts in the post directory that is 
+relevant
 postSubDir <- list.dirs(paste0(basePath,"_posts"), recursive=TRUE,full.names = FALSE)
 #grab the last dir in the repo - again this assumes only one
 length(postSubDir)

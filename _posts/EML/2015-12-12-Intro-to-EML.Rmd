@@ -60,7 +60,7 @@ format metadata. In this lesson, we will overview the basics of how to access
 key metadata that we might need to understand, in order to work with a particular
 dataset.
 
-##Work With EML
+## Work With EML
 
 To begin, we will load the `EML`, `purrr` and `dplyr` libraries.
 
