@@ -47,13 +47,27 @@ Similarly, the creator of a dataset is also be found in a hierarchical tag
 structure.
 
 
-    <creator>
+<pre><code class="xml">
+	<creator>
+		  <individualName>
+		    <givenName>Emery</givenName>
+		    <surName>Boose</surName>
+		  </individualName>
+	</creator>
+</code></pre>
+
+NOTE: EML BELOW With ```xml
+
+~~~ xml
+<!-- testing this -->
+<creator>
       <individualName>
         <givenName>Emery</givenName>
         <surName>Boose</surName>
       </individualName>
-    </creator>
-    
+</creator>
+~~~
+
 
 The `EML` package for `R` is designed to read and allow users to work with `EML`
 format metadata. In this lesson, we will overview the basics of how to access
