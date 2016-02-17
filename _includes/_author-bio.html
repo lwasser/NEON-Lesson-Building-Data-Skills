@@ -12,7 +12,43 @@
 <p>{{ site.owner.bio }}</p>
 
 
-<h3>Activities By Topic</h3>
+{% if page.workshopSeries %}
+
+<h5>Workshop: <br>{{ page.mainTag }}</h5>
+{% for post in site.posts %}
+	{% if post.workshopSeries contains page.mainTag %}
+	 	<div id="workshopLink">
+        <h4>
+		<a href="{{ site.baseurl }}{{ post.url }}" class="post-link" ><div>{{ post.title }}</div></a>
+		</h4>
+		</div>
+	{% endif %}
+{% endfor %}
+
+{% else %}
+
+<!-- commenting this out for now 
+<h3>Workshops</h3>
+-->
+{% comment %}
+{% for member in site.data.workshopSeries %}
+{% assign counter = 0 %}
+<!-- this code counts the number of posts associated with the member -->
+{% for post in site.posts %}
+	{% if post.workshopSeries contains member.slug %}
+	{% assign counter = counter | plus: 1 %}
+	{% endif %}
+{% endfor %}	
+  <h5>
+  <a href="{{ site.baseurl }}/data-workshop/{{ member.slug }}">{{ member.name }} ({{ counter }})</a>
+  </h5> 
+{% endfor %}
+
+{% endcomment %}
+
+
+<h3>Tags</h3>
+
 {% for tag in site.tags %}
 {% assign t = tag | first %}
   {% for atag in site.data.tags %}
@@ -24,9 +60,26 @@
      </a></h5>
 {% endfor %} 
 
+<h3>Tutorial by R Package</h3>
 
-<h4><a href="{{ site.baseurl }}/activities/">View ALL Activities</a></h4>
-<h4><a href="{{ site.baseurl }}/activities-by-tag/">Activities by Tag</a></h4>
+{% for member in site.data.packagesLibraries %}
+{% assign counter = 0 %}
+<!-- this code counts the number of posts associated with the member -->
+{% for post in site.posts %}
+	{% if post.packagesLibraries contains member.slug %}
+	{% assign counter = counter | plus: 1 %}
+	{% endif %}
+{% endfor %}	
+  <h5><a href="{{ site.baseurl }}/R-package/{{ member.slug }}">{{ member.name }} ({{ counter }})</h5>
+  	
+
+{% endfor %}
+
+{% endif %}
+
+<h4><a href="{{ site.baseurl }}/activities/">View ALL Tutorials</a></h4>
+<h4><a href="{{ site.baseurl }}/data-workshops/">View ALL Workshops</a></h4>
+<!-- <h4><a href="{{ site.baseurl }}/activities-by-tag/">Activities by Tag</a></h4> -->
 
 <br><br><br>
 
