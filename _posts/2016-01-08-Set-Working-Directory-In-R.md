@@ -3,7 +3,7 @@ layout: post
 title: "Download a NEON Teaching Data Subset & Set A Working Directory In R"
 date:  2015-12-07
 lastModified: 2016-02-17
-createddate:  2015-12-07
+dateCreated:  2015-12-07
 estimatedTime: 10 Min
 authors: Megan A. Jones
 contributors: [Leah A. Wasser]
@@ -152,8 +152,12 @@ same but without that directory.
 	 </figcaption>
 </figure> 
 
-Now that we have our data in an accessible format, we can move into `R` to set
-the working directory. 
+=======
+<div id="challenge" markdown="1">
+## Challenge: Download and Unzip Teaching Data Subset
+Prepare the **Site Layout Shapefiles Teaching Data Subset** so that the files
+are accessible and ready to be opened in`R`. 
+</div>
 
 ## The R Working Directory
 In `R`, the working directory is the directory where `R` starts when looking for 
