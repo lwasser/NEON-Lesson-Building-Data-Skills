@@ -3,15 +3,15 @@ description: 	A test development site where new data and classroom lessons will 
 #Comment out url when working locally to resolve base urls correctly ok
 #use this when pushing to git for live version
 
-url:      http://neoninc.github.io/NEON-DataSkills-Lesson-Development
-baseurl:	http://neoninc.github.io/NEON-DataSkills-Lesson-Development
+url:      http://neoninc.github.io/NEON-Lesson-Building-Data-Skills
+baseurl:	http://neoninc.github.io/NEON-Lesson-Building-Data-Skills
 
 #use this when working locally
 #just uncomment the first localhost.
 #url: http://localhost:4000
 #baseurl: http://localhost:4000
 
-disqus_shortname: neondataskills
+disqus_shortname: 
 
 # Social networking links are used in author-bio sidebar. Update and remove as you like.
 
