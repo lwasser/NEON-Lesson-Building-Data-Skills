@@ -7,7 +7,7 @@ dateCreated:  2015-12-07
 estimatedTime: 10 Min
 authors: Megan A. Jones
 contributors: [Leah A. Wasser]
-packagesLibraries: []
+packagesLibraries:
 categories: [self-paced-tutorial]
 tags: [R]
 mainTag: 
@@ -18,9 +18,9 @@ code1: Set-Working-Directory-In-R.R
 image:
  feature: coding_R.jpg
  credit: National Ecological Observatory Network (NEON).
- creditlink: http://www.neoninc.org
+ creditlink: 
 permalink: /R/Set-Working-Directory
-comments: false
+comments: true
 ---
 
 {% include _toc.html %}
@@ -320,7 +320,8 @@ contents of the working directory in the Files pane.
 ***
 
 ## Directory vs. Folder
-Both of these words refer to the same thing. Folder makes a lot of sense when we
+
+"Directory" and "Folder" both refer to the same thing. Folder makes a lot of sense when we
 think of an
 isolated folder as a "bin" containing many files. However, the analogy to a
 physical file folder falters when we start thinking about the relationship 
@@ -329,7 +330,6 @@ This is why the term directory is often preferred. Any directory (folder) can
 hold other directories and/or files. When we set the *working directory*, we 
 are telling the computer the location of the directory (or folder) to start with
  when looking for other files or directories, or to save any output to. 
-{: .notice}
 
 Return to the next section in the tutorial: 
 <a href="{{ site.baseurl }}/R/Set-Working-Directory#download--uncompress-the-data"> Download & Uncompress The Data</a>
