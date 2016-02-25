@@ -13,8 +13,8 @@ baseTemplatePath <-"~/Documents/GitHub/NEON-Data-Skills-Development/"
 
 #this is where you want to move files to
 #updatePath <-"~/Documents/GitHub/NEON-R-Spatial-Vector/"
-updatePath <-"~/Documents/GitHub/NEON-R-Spatial-Raster/"
-#updatePath <-"~/Documents/GitHub/NEON-R-Tabular-Time-Series/"
+#updatePath <-"~/Documents/GitHub/NEON-R-Spatial-Raster/"
+updatePath <-"~/Documents/GitHub/NEON-R-Tabular-Time-Series/"
 #updatePath <-"~/Documents/GitHub/NEON-R-Spatio-Temporal-Data-and-Management-Intro/"
 
 #copy org dir over - this contains the md home page files for categories, tags, etc
@@ -27,6 +27,7 @@ file.copy(paste0(baseTemplatePath,"/_data"), updatePath, recursive=TRUE)
 file.copy(paste0(baseTemplatePath,"/assets"), updatePath, recursive=TRUE)
 
 #copy data dir - this contains the YAML lists
+#note: the new home include file should not be transferred to the data-lesson repos
 file.copy(paste0(baseTemplatePath,"/_layouts"), updatePath, recursive=TRUE)
 
 #copy data dir - this contains the YAML lists
