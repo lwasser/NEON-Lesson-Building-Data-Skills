@@ -13,8 +13,8 @@ basePath <-"~/Documents/GitHub/NEON-R-Spatial-Vector/"
 
 
 #this is where you want to move files to
-#prodPath <-"~/Documents/GitHub/NEON-Data-Skills-Development/"
-prodPath <-"~/Documents/GitHub/NEON-Data-Skills/"
+prodPath <-"~/Documents/GitHub/NEON-Data-Skills-Development/"
+# prodPath <-"~/Documents/GitHub/NEON-Data-Skills/"
 #prodPath <-"~/Documents/GitHub/deleteMe/"
 
 #get subdir in _posts

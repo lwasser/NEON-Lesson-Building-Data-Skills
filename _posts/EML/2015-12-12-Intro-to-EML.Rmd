@@ -121,7 +121,7 @@ aggregated at a particular time interval. (e.g. one data table contains monthly
 average data, another contains 15 minute averaged data, etc)
 
 
-#Explore Basic EML Properties
+## Explore Basic EML Properties
 
 We can begin to explore the contents of our EML file and associated data that it
 describes. Let's start at the dataset level. We can use `eml_get` to view the 
@@ -173,7 +173,7 @@ eml_HARV@dataset@coverage@geographicCoverage
 
 ```
 
-##Identify & Map Data Location
+## Identify & Map Data Location
 
 Looking at the coverage for our data, there is only one unique x and y value. This 
 suggests that our data were collected at (x,y) one point location. We know this is a 
