@@ -309,7 +309,7 @@ the full URL if image is not in the images folder or a local image.
 	<img src="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
 	</a>
 	<a href="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
-	<img src="{{ site.baseur l}}/images/example-post-images/600x300.jpg"></a>
+	<img src="{{ site.baseurl }}/images/example-post-images/600x300.jpg"></a>
 	<figcaption>Caption describing these two images. Include Source: 
 	</figcaption>
 </figure>
