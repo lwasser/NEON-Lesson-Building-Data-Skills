@@ -296,8 +296,8 @@ this example.**
 		</figcaption>
 	</figure>
 
-replace `{ { site.baseurl } }/images/example-post-images/pnt_line_poly.png` with the full URL if 
-image is not in the images folder or a local image.
+replace `{ { site.baseurl } }/images/example-post-images/pnt_line_poly.png` with 
+the full URL if image is not in the images folder or a local image.
 
 
 ***
@@ -306,7 +306,7 @@ image is not in the images folder or a local image.
 
 <figure class="half">
 	<a href="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
-	<img src="{{ site.baseur l}}/images/example-post-images/600x300.jpg">
+	<img src="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
 	</a>
 	<a href="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
 	<img src="{{ site.baseur l}}/images/example-post-images/600x300.jpg"></a>
@@ -314,15 +314,15 @@ image is not in the images folder or a local image.
 	</figcaption>
 </figure>
 
- **NOTE: space between initial 
-{ { only added to prevent code from rendering in this example.**
+ **NOTE: space between initial { { only added to prevent code from rendering in 
+this example (below).**
 
 	 <figure class="half">
-		<a href="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
-		<img src="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
+		<a href="{ { site.baseurl }}/images/example-post-images/600x300.jpg">
+		<img src="{ { site.baseurl }}/images/example-post-images/600x300.jpg">
 		</a>
-		<a href="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
-		<img src="{{ site.baseurl }}/images/example-post-images/600x300.jpg">
+		<a href="{ { site.baseurl }}/images/example-post-images/600x300.jpg">
+		<img src="{ { site.baseurl }}/images/example-post-images/600x300.jpg">
 		</a>
 		<figcaption>Caption describing these two images. Source: here
 		</figcaption>
