@@ -1,0 +1,97 @@
+---
+title: "Tutorial 01 - Phenology"
+output: html_document
+---
+```{r loadStuff}
+
+library(dplyr)
+library(ggplot2)
+
+ind <- read.csv('N:/Common/TOS/OSIS_dataLessons/phe_data HARVperindividual_Clean.csv', stringsAsFactors = FALSE )
+status <- read.csv('N:/Common/TOS/OSIS_dataLessons/phe_data HARV2014statusintensity_Clean.csv', stringsAsFactors = FALSE)
+
+```
+
+
+Explore the data, get to know what the dataframe looks like
+
+```{r}
+#What are the fieldnames in this dataset?
+names(ind)
+#how many rows are in the data?
+nrow(ind)
+#look at the first six rows of data.
+head(ind)
+#look at the structure of the dataframe.
+str(ind)
+
+names(status)
+nrow(status)
+head(ind)
+str(ind)
+
+```
+
+
+join dataframes
+```{r}
+
+#select status fields of interest
+# create a new object "ind2" to preserve the original object "ind"
+ind2 <- select(ind, c(individualID, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertainty,
+                      elevation, elevationUncertainty, addDate, dropDate))
+
+
+#Create a new dataframe "phe" that has all of the fields of interest from both original data frames
+phe <- left_join(status, ind2, by='individualID')
+
+```
+
+1. Filter by phenophase of interest
+
+```{r setup, include=FALSE}
+#see which phenophases are present
+unique(phe$phenophaseName)
+
+#subset to just the "leaves" and "Colored leaves" phenophases
+# overwrite object "phe" as you know these are the only phenophases you want to work with for now
+phe <- filter(phe, phenophaseName=="leaves" | phenophaseName=="Colored leaves")
+
+# check that it worked
+unique(phe$phenophaseName)
+
+
+```
+
+```{r}
+
+```
+
+
+3. Flags: Duplicate records
+```{r}
+# Check for presense of flagged duplicates
+unique(phe$duplicateIndividualDayStatusQF)
+
+#remove the 1's 
+#How many rows are removed?
+length(which(phe$duplicateIndividualDayStatusQF==1)
+phe <- filter(phe, !duplicateIndividualDayStatusQF==1)
+
+nrow(phe)
+```
+
+
+4. Calculate the phenophase
+total Yes of total Individuals
+
+```{r}
+
+```
+
+Plot - bar graph of % of individuals in different phenophase over course of year. Interval = Daily. 
+
+
+```{r}
+
+```
