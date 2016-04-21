@@ -8,23 +8,41 @@
 # Set working directory
 setwd("/Volumes/TOS/OSIS_dataLessons/temp_data/")
 
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+
+site <- "HARV"
+
+# Now that you have the data, let's take a look at the readme and understand 
+# what's in the data. View readme and variables file. This will guide you
+# on how to import the data.
+
 # Read in data
-harv.temp30 <- read.csv("NEON.D01.HARV.DP1.00003.001.00000.000.060.030.TAAT_30min.csv",
-                        stringsAsFactors = FALSE)
-scbi.temp30 <- read.csv("NEON.D02.SCBI.DP1.00003.001.00000.000.060.030.TAAT_30min.csv",
-                        stringsAsFactors = FALSE)
+temp30 <- read.csv(paste("NEON.D01.", site, 
+                ".DP1.00003.001.00000.000.060.030.TAAT_30min_rev.csv",
+                sep=""), stringsAsFactors = FALSE, header=TRUE)
 
-## Format dateTime
-harv.temp30$startDateTime[1]
+temp30_orig <- read.csv(paste("NEON.D01.", site, 
+                         ".DP1.00003.001.00000.000.060.030.TAAT_30min.csv",
+                         sep=""), stringsAsFactors = FALSE, header=TRUE)
 
-## Convert the entire date/time values in format y-m-d h:m:s
-as.POSIXct(harv.temp30$startDateTime[2],format="%Y-%m-%dT%H:%M")
-new.date.time <- as.POSIXct(harv.temp30$startDateTime, format="%Y-%m-%dT%H:%M")
+# Get a general feel for the data: View structure of data frame
+str(temp30)
+
+# Are there NA's in your data? Count 'em up
+sum(is.na(temp30$tempTripleMean) )
+
+# View the date range
+range(temp30$startDateTime)
 
 # Convert to correct time zone, default for this code is MST
 # assign time zone to just the first entry
-harv.temp30$startDateTime <- as.POSIXct(harv.temp30$startDateTime,
-           format = "%Y-%m-%dT%H:%M", tz = "America/New_York")
+temp30$startDateTime <- as.POSIXct(temp30$startDateTime,
+format = "%Y-%m-%dT%H:%M", tz = "GMT")
 # check that conversion worked
-str(harv.temp30$startDateTime)
+str(temp30$startDateTime)
+
+# Limit dataset to dates of interest (4/1/2014-11/30/2014)
+subset(temp30, )
 
