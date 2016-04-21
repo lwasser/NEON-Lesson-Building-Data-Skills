@@ -31,8 +31,12 @@ temp30 <- read.csv(paste("NEON.D01.", site,
 # Get a general feel for the data: View structure of data frame
 str(temp30)
 
-# Are there NA's in your data? Count 'em up
-sum(is.na(temp30$tempTripleMean) )
+# Review the data quality (are these data you trust?)
+  #1. Are there quality flags in your data? Count 'em up
+  sum(temp30$finalQF==1)
+  #2. Are there NA's in your data? Count 'em up
+  sum(is.na(temp30$tempTripleMean) )
+  #2. 
 
 # View the date range
 range(temp30$startDateTime)
