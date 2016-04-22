@@ -60,5 +60,15 @@ data.  Feel free to just add text until the data set is finalized and uploaded).
 </div>
 
 
-START LESSON HERE
+Now that we see that there are differences in/shifts in phenophases -- what are the drivers of phenophases?
+	Commonly examined at drivers:
+precip
+day length 
+temperature - 
+Let’s choose temp - 
+But what aspect of temp? high temperature is important to plant phenophase. 
+Max temp
+ 
+How does the mean high temperature per day affect the phenophase. 
+
 
