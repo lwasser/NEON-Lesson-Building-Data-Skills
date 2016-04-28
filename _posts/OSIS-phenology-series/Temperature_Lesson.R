@@ -20,18 +20,23 @@ site <- "HARV"
 
 # Read in data
 temp30 <- read.csv(paste("NEON.D01.", site, 
-                ".DP1.00003.001.00000.000.060.030.TAAT_30min_rev.csv",
+                ".DP1.00003.001.00000.000.060.030.TAAT_30min_teaching.csv",
                 sep=""), stringsAsFactors = FALSE, header=TRUE)
 
-temp30_orig <- read.csv(paste("NEON.D01.", site, 
-                         ".DP1.00003.001.00000.000.060.030.TAAT_30min.csv",
-                         sep=""), stringsAsFactors = FALSE, header=TRUE)
+#temp30_orig <- read.csv(paste("NEON.D01.", site, 
+#                         ".DP1.00003.001.00000.000.060.030.TAAT_30min.csv",
+#                         sep=""), stringsAsFactors = FALSE, header=TRUE)
+
 
 # Get a general feel for the data: View structure of data frame
 str(temp30)
 
-# Are there NA's in your data? Count 'em up
-sum(is.na(temp30$tempTripleMean) )
+# Review the data quality (are these data you trust?)
+  #1. Are there quality flags in your data? Count 'em up
+  sum(temp30$finalQF==1)
+  #2. Are there NA's in your data? Count 'em up
+  sum(is.na(temp30$tempTripleMean) )
+  #2. 
 
 # View the date range
 range(temp30$startDateTime)
