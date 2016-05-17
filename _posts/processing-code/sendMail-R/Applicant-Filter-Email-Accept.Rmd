@@ -1,0 +1,130 @@
+---
+title: "Merge-Applications.R"
+author: "Leah A. Wasser"
+date: "April 1, 2016"
+output: html_document
+---
+
+First, import the applications and clean out incompletes.
+
+```{r}
+# import data
+# note these are the applications that are complete
+apps <- read.csv("~/Documents/1_Summer-institute/inst-2016-apps-flags.csv", 
+                 na.strings=c(-99, 0, "", "NA"),
+                 stringsAsFactors = FALSE)
+
+
+# remove some of the early columns that are not required
+apps <- apps[,14:16]
+
+# Then filter out applications according to status
+# 1 = accepted, 2 - waiting list # 0 = not accepted
+# each group will recieve a different email message.
+
+```
+
+## Accepted Applications
+
+We accepted applications based upon their goals largely. If the goals fit with 
+the content as we have defined it they were accepted in the first round. We 
+also looked at their R and python skill level. However all applications submitted
+atleast had the desired (basic) skill level. 
+
+all applications were reviewed in google docs for ease of review. 
+The scripts `mail-merge.R` and `app-review.Rmd` were used to sort all of the 
+application information and produce clean looking pdf files. 
+
+https://docs.google.com/spreadsheets/d/1rK6W3NxgN1PrMfjYAvl_I8PXo0tqeC4Wx5dLnu97vlU/edit
+
+```{r filter-accepted, echo=FALSE}
+# reader is nice as you don't have to worry about factors and it handles column
+# classes better
+library(readr)
+library(plyr) # to join the df
+
+# import data
+apps.review <- read.csv("~/Documents/1_Summer-institute/application-review.csv",
+                        stringsAsFactors = FALSE,
+                        na.strings = c("NA"))
+
+# join the review csv with the csv containing all applications
+# note -- something odd is happening in the join where Sampath is coming in twice. probably
+# a space but it doesn't matter given i am not accepting him anyway - incomplete app.
+fin.apps.reviewed <- join(apps, apps.review, by = "lastName")
+
+# now extract just the applications that were accepted to the institute
+accepted.apps <- fin.apps.reviewed[(fin.apps.reviewed$Accept == 1),]
+
+# remove NA values -- final accepted applicants
+accepted.apps <- accepted.apps[!is.na(accepted.apps$Accept),]
+
+# export final applicants
+write_csv(accepted.apps, 
+          "final-applicant-pool/accepted-all-apps.csv")
+```
+
+## Scholarships vs Non Scholarship
+
+A few participants were awarded scholarships. We will send those participants
+a slightly different acceptance email. Filter those out next
+
+```{r scholarship}
+
+# filter out those who requested scholarships
+accepted.app.schol <- accepted.apps[accepted.apps$Scholarship==1,]
+
+# write csv of those participants
+write_csv(accepted.app.schol, 
+          "final-applicant-pool/accepted-Schol-apps.csv")
+
+# filter out those who requested scholarships
+accepted.app.NOschol <- accepted.apps[accepted.apps$Scholarship==0,]
+
+# write csv of those participants
+write_csv(accepted.app.NOschol, 
+          "final-applicant-pool/accepted-noSchol-apps.csv")
+
+```
+
+
+## Wait Listed  Applications
+
+Some applications were wait listed. These individuals were often too advanced 
+or topically a bit off what we plan to teach.
+
+```{r not-accepted }
+
+# now extract just the applications that were accepted to the institute
+waitlist.accepted.apps <- fin.apps.reviewed[(fin.apps.reviewed$Accept == 2),]
+
+# remove NA values -- final accepted applicants
+waitlist.accepted.apps <- waitlist.accepted.apps[!is.na(waitlist.accepted.apps$Accept),]
+
+# export final applicants
+write_csv(waitlist.accepted.apps, 
+          "final-applicant-pool/waitlist-apps.csv")
+
+
+```
+
+## Not Accepted This Year
+
+Next, extract those who weren't accepted but had complete applications. We will
+email them informing them they did not get in on the 4th.
+
+```{r not-accepted }
+
+# now extract just the applications that were accepted to the institute
+not.accepted.apps <- fin.apps.reviewed[(fin.apps.reviewed$Accept == 0),]
+
+# remove NA values -- final accepted applicants
+not.accepted.apps <- not.accepted.apps[!is.na(not.accepted.apps$Accept),]
+
+# export final applicants
+write_csv(not.accepted.apps, 
+          "final-applicant-pool/not-accepted-apps.csv")
+
+
+```
+
