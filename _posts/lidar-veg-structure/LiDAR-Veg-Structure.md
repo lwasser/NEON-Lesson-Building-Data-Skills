@@ -76,6 +76,8 @@ A LiDAR system measures the time it takes for emitted light to travel  to the gr
  
 ## CHM vs InSitu Differences Differences
 
+<iframe width="900" height="800" frameborder="0" scrolling="no" src="https://plot.ly/~leahawasser/24.embed"></iframe>
+
 <iframe width="900" height="800" frameborder="0" scrolling="no" src="https://plot.ly/~leahawasser/153.embed"></iframe>
 
 
