@@ -103,21 +103,24 @@ the remote drive onto your computer
 ``` {r import-data}
 # Set working directory
 
-# setwd("/Volumes/TOS/OSIS_dataLessons/temp_data/")
+# setwd("/Volumes/TOS/OSIS_dataLessons/")
 # (set wd for Megan's computer -others comment out - I can't get the Volumes to work) -
-setwd("Documents/data/OSIS_dataLessons/temp_data/")
+setwd("~/Documents/data/OSIS_dataLessons/")
 
 # Load required libraries
 library(ggplot2)
 library(dplyr)
 
 # why?
-site <- "HARV"
+# site <- "HARV"
 
 # Read in data
-temp30 <- read.csv(paste("NEON.D01.", site, 
-                ".DP1.00003.001.00000.000.060.030.TAAT_30min_teaching.csv",
-                sep=""), stringsAsFactors = FALSE, header=TRUE)
+temp30 <- read.csv(file="temp_data/(paste("NEON.D01.", site, 
+                ".DP1.00003.001.00000.000.060.030.TAAT_30min_teaching.csv"),
+                sep="")", stringsAsFactors = FALSE, header=TRUE)
+
+# alternate read in
+temp30 <- read.csv(file="temp_data/NEON.D01.HARV.DP1.00003.001.00000.000.060.030.TAAT_30min_teaching.csv", stringsAsFactors = FALSE, header=TRUE)
 
 ```
 
@@ -145,17 +148,23 @@ Do we have NA data?
 How to deal with? 
 
 ``` {r na-data}
-Are there NA's in your data? Count 'em up
-  sum(is.na(temp30$tempTripleMean) )
-  #2. 
+# Are there NA's in your data? Count 'em up
+sum(is.na(temp30$tempTripleMean) )
 
-mean(temp30$tempTripleMean)- 
-# why won't this work? 
+mean(temp30$tempTripleMean)
+```
 
-na.rm=TRUE  tells R to ignore them for calculaation,etc
+Why was there no output? 
 
-newDF <- na.omit(DF) -> new data frame without the NAs
+We had previously seen that there are NA values in the temperature data. Given 
+there are NA values, R, by default, won't calculate a mean (and many other 
+summary statistics) as the NA values could skew the data. 
 
+`na.rm=TRUE` #tells R to ignore them for calculaation,etc
+
+```{r }
+# create new dataframe without NAs
+newDF <- na.omit(DF)  
 ```
 
 Convert to correct time zone, default for this code is MST

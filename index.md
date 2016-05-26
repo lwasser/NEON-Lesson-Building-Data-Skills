@@ -9,7 +9,7 @@ image:
 ---
 
 
-##Welcome to the NEON #WorkWithData Portal! 
+## Welcome to the NEON #WorkWithData Portal! 
 
-This site contains the DEVELOPMENT lessons for the NEON data skills website.  
+This site contains the DEVELOPMENT lessons for the NEON data skills website. 
 
