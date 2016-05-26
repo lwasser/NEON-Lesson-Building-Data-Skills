@@ -18,7 +18,7 @@ image:
   feature: TeachingModules.jpg
   credit:
   creditlink:
-permalink: /example-post/
+permalink: /example-post
 comments: false
 ---
 
@@ -212,7 +212,11 @@ in the table of contents side bar (default, can be changed in the _config file).
 
 ***
 
-## Data Tips
+## Data Tips/Data Notes
+
+When there is "bonus" information it can be added as a Data Tip (coding related)
+or Data Note (not coding related). Same look for both just the first words are
+different. 
 
 <i class="fa fa-star"></i> **Data Tip:** Here is a block with a data tip. 
 Sometimes it might have some `code` in it. A data tip can include a list or
@@ -223,6 +227,8 @@ links, however, it cannot contain figures, etc.
 	Sometimes it might have some `code` in it. A data tip can include a list or
 	links, however, it cannot contain figures, etc.
 	{: .notice}
+
+
 
 ***
 
