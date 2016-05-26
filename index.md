@@ -5,11 +5,13 @@ Tags: []
 image:
   feature: texture-feature-07.png
   credit: National Ecological Observatory Network (NEON)
-  creditlink: http://www.neoninc.org
+  creditlink: http://www.neonscience.org
 ---
 
 
-## Welcome to the NEON #WorkWithData Portal! 
+## Welcome to the NEON Lesson Building Portal! 
 
-This site contains the DEVELOPMENT lessons for the NEON data skills website. 
+This site contains the DEVELOPMENT lessons for the
+<a href="http://neondataskills.org/" target="_blank"> NEON Data Skills website</a>. 
+
 

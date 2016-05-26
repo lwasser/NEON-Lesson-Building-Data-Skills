@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "About Categories, Tags and Other YAML organized tutorials"
-date:   2016-02-01
+date:   2016-01-16
 authors: [Leah Wasser, Megan A. Jones]
 contributors: [Contributor One]
 dateCreated: 2015-10-23
