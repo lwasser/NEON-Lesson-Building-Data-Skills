@@ -1,0 +1,209 @@
+---
+title: "Institute-Applications"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+
+```{r setup-functions, echo=FALSE}
+
+library(readr)
+library(stringr)
+# build list function
+
+fun_bldList<- function(a.string, cols) {
+  # a.string <- "Q33_"
+  # cols=1
+  # build list of all options for question 19
+  q.names <- grep(a.string, names(apps))
+  # create list of responses for each language option
+  element.list <- as.data.frame(t(apps[i, q.names]), stringsAsFactors = FALSE)
+  # create a list of response questions for optional use
+  # pull the first row which contains the question
+  titles <- as.character(apps[1, q.names])
+  
+  # split titles at dash
+  # this is causing issues now as there's no consistent way to break this up.
+  #df.titles <- as.data.frame(strsplit(titles, "\\.\\.-"), stringsAsFactors = FALSE)
+  df.titles <- str_split(titles, "-", n=2)
+  df.titles <- do.call(rbind.data.frame, df.titles)
+  #df.titles <- as.data.frame(str_split(titles, "-", n=2), stringsAsFactors = FALSE)
+
+  # just pull the question title 
+  # df.titles <- df.titles[2,]
+  # names(df.titles) <- df.titles[1,]
+  df.titles[,3] <- element.list[,1]
+  
+  if (cols==1){
+    # remove NA values
+    element.list <- element.list[!is.na(element.list)]
+    return(element.list)
+} else {
+  # remove rows in the DF with NA
+  #df.titles <- df.titles[!is.na(df.titles)]
+  #df.titles[2,] <- names(df.titles)
+  return(df.titles)
+  }
+}
+
+```
+
+```{r import-data, echo=FALSE}
+
+# import data
+apps <- read.csv("~/Documents/1_Summer-institute/inst-2016-apps-flags.csv", 
+                 na.strings=c(-99, 0, "", "NA"),
+                 stringsAsFactors = FALSE)
+
+# filter out Q17 (goals) == NA
+inCompleteApps <- apps[is.na(apps$Q17),]
+apps <- apps[!is.na(apps$Q17),]
+
+```
+
+```{r populate-variables, echo=FALSE}
+# implement data cleaning -- replace dashes with slash
+# gsub("-", "/", apps)
+
+# set all values of -99 to NA
+apps[apps==-99] <- NA
+
+# get contact info and background
+firstName <- apps$Q4[i]
+lastName <- apps$Q5[i]
+
+email <- apps$Q6[i]
+phone <- apps$Q7[i]
+state <- apps$Q10[i]
+city <- apps$Q8[i]
+country <- apps$Q9_TEXT[i]
+
+institution <- apps$Q12[i]
+country <- apps$Q9_TEXT[i]
+domain <- apps$Q14[i]
+position <- apps$Q13[i]
+position.text <- apps$Q13_TEXT[i]
+position.other <- apps$Q15[i]
+
+# goals
+goals <- apps$Q17[i]
+
+
+# create list of languages - question 19
+language.list <- fun_bldList("Q19_", 1)
+ext.data.list <- fun_bldList("Q21_", 1)
+ext.RS.list <- fun_bldList("Q22_", 1)
+rs.list.desc <- apps$Q23[i]
+
+ext.meta.list <- fun_bldList("Q24_", 1)
+file.formats.list <- fun_bldList("Q26_", 1)
+document.list <- fun_bldList("Q25_", 1)
+
+# this is throwing an error?
+
+cost.ack <- apps$Q33[i]
+funding.source <- apps$Q33[i]
+
+funding.explanation <- apps$Q34[i]
+
+
+
+# return a data frame so i can print the question text
+data.freq.list <- fun_bldList("Q20_", 2)
+spatial.tools.list <- fun_bldList("Q27_", 2)
+r.comfort <- fun_bldList("Q28_", 2)
+py.comfort <- fun_bldList("Q29_", 2)
+
+
+```
+ 
+## `r firstName` `r lastName`
+
+**email:**  `r email`, **ph:**  `r phone`,
+
+**Location:** `r city`, `r state`
+**Country:** `r country`
+ 
+**Affiliation:** `r institution`
+
+**Position:** `r position`, `r if (!is.null(position.text)) { position.text }`
+`r if (!is.na(position.other)) { position.other }`
+
+**Domain:** `r domain`
+ 
+****
+## Goals
+
+`r goals`
+ 
+## Scholarship Request
+
+`r cost.ack`
+
+`r funding.source`
+
+**Request For Scholarship:** `r funding.explanation`
+
+**** 
+
+## What `r firstName` Already Knows 
+
+**Languages:** `r language.list` 
+
+**Data Used:** `r ext.data.list` 
+
+***
+
+**Remote Sensing Used:** `r ext.RS.list`
+
+**RS notes:** `r rs.list.desc`
+
+***
+
+**Metadata Used:** `r ext.meta.list`
+
+**Familiar File Formats:** `r file.formats.list`
+
+**Code Documentation:** `r document.list`
+
+
+
+```{r print-knowledge, results='asis', echo=FALSE}
+for (someData in (1:nrow(data.freq.list))){ 
+  cat(paste0("* **", data.freq.list[someData,2], ":** ", data.freq.list[someData,3], "\n"))
+  }
+
+
+```
+
+### Spatial Tools List:
+
+
+```{r spatial-tools-knowledge, results='asis', echo=FALSE}
+for (someData in (1:nrow(spatial.tools.list))){ 
+  cat(paste0("* **", spatial.tools.list[someData,2], ":** ", spatial.tools.list[someData,3], "\n"))
+  }
+```
+
+### Comfort in R:
+
+
+```{r rr-knowledge, results='asis', echo=FALSE}
+for (someData in (1:nrow(r.comfort))){ 
+  cat(paste0("* **", r.comfort[someData,2], ":** ", r.comfort[someData,3], "\n"))
+  }
+```
+
+
+### Comfort in Python:
+
+
+```{r py-knowledge, results='asis', echo=FALSE}
+for (someData in (1:nrow(py.comfort))){ 
+  cat(paste0("* **", py.comfort[someData,2], ":** ", py.comfort[someData,3], "\n"))
+  }
+```
+
+
+

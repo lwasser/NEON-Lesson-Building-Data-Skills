@@ -1,0 +1,20 @@
+---
+title: "Institute-Applications"
+output: pdf_document
+---
+
+This code summarizes applications.
+
+```{r}
+# import data
+new <- read.csv("~/Documents/1_Summer-institute/Summer_Institute_Application_Form_2016__FINAL.csv",
+                stringsAsFactors = FALSE)
+name <- personalized_info$Q4[i]
+time <- personalized_info$Q5[i]
+```
+ 
+Dear `r name`,
+ 
+Your meeting time is `r time`.
+ 
+See you then!
