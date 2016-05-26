@@ -1,23 +1,26 @@
 ---
 layout: post
-title: "Title Here"
-date:   2016-01-01
-authors: [ ]
+title: "Temperature as a Driver of Phenological Change"
+date: 2016-04-01
+authors: [Lee Stanish, Megan A. Jones]
 contributors: [ ] 
 dateCreated: 2016-01-01
-lastModified: `r format(Sys.time(), "%Y-%m-%d")`
-packagesLibraries: [ ]
+packagesLibraries: [dplyr, ggplot2]
 category: [self-paced-tutorial]
 tags: [ ]
+lastModified: `r format(Sys.time(), "%Y-%m-%d")`
 mainTag: 
-tutorialSeries: [ ]
-description: "Brief description in plain text."
-code1: use-if-associated-code.R
+tutorialSeries: [neon-pheno-temp-series]
+description: "This tutorial discusses common drivers of phenological change. And
+then demonstrates how to load and use NEON triple-asperated temperature data. 
+Specific tasks include conversion to POSIX date/time class, subsetting by date, 
+and plotting the data."
+code1: 
 image:
   feature: lidar_GrandMesa.png
   credit: LiDAR data collected over Grand Mesa, Colorado - National Ecological Observatory Network (NEON)
   creditlink: 
-permalink: 
+permalink: /R/neon-temp-phenology/
 comments: true
 ---
 
@@ -37,14 +40,12 @@ You will need the most current version of `R` and, preferably, `RStudio` loaded
 on your computer to complete this tutorial.
 
 ###Install R Packages
-* **NAME:** `install.packages("NAME")`
-
+* **ggplot2:** `install.packages("ggplot2")`
+* **dplyr:** `install.packages("dplyr")`
 
 [More on Packages in R - Adapted from Software Carpentry.]({{site.baseurl}}R/Packages-In-R/)
 
 ###Download Data 
-(include file that inserts a button to download data from Figshare & text about
-data.  Feel free to just add text until the data set is finalized and uploaded).
 
 {% include/dataSubsets/_data_NAME.html %}  
 
@@ -55,10 +56,143 @@ data.  Feel free to just add text until the data set is finalized and uploaded).
 
 ##Additional Resources
 
-* (links if you want to provide)
-
 </div>
 
+## Drivers of phenology
 
-START LESSON HERE
+Now that we see that there are differences in and shifts in phenophases, what 
+are the drivers of phenophases?
+
+Commonly studied drivers of phenophase change include:
+	
+* precipitation - how much rain/snow falls and the timing of the precipitation
+* day length - day length effects the amount of sun the plants recieve and can 
+use to photosynthesis and grow
+* temperature - growth rates change depending on the temperature for different 
+species
+
+To continue our exploration of what might be a driver to the changes in
+phenosphase that we saw in the previous tutorial, we will focus on temperature.
+
+
+## NEON Temperature Data 
+
+NEON collects XXX temperature at XXX intervals. Therefore, we could look at many
+different temperature measures:
+
+* near continuous temperature across the days
+* aggregated data: min, mean, or max over a some duration
+* the number of days since a freezing temperatures
+
+Different species respond differently to the above measures. WHY high 
+temperature is important to plant phenophase. 
+
+Therefore, our research question going forward is: 
+
+**How does the mean high temperature per day affect the phenophase?** 
+
+
+## Import Data
+
+This lesson uses 30 minute temperature data from the triple aspirated
+temperature sensors mounted above the canopy on the NEON tower.
+
+To set the working directory on the Mac, you need to first mount
+the remote drive onto your computer
+
+``` {r import-data}
+# Set working directory
+
+# setwd("/Volumes/TOS/OSIS_dataLessons/temp_data/")
+# (set wd for Megan's computer -others comment out - I can't get the Volumes to work) -
+setwd("Documents/data/OSIS_dataLessons/temp_data/")
+
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+
+# why?
+site <- "HARV"
+
+# Read in data
+temp30 <- read.csv(paste("NEON.D01.", site, 
+                ".DP1.00003.001.00000.000.060.030.TAAT_30min_teaching.csv",
+                sep=""), stringsAsFactors = FALSE, header=TRUE)
+
+```
+
+## explore temp data - 
+Now that you have the data, let's take a look at the readme and understand 
+what's in the data. View readme and variables file. This will guide you
+on how to import the data.
+
+``` {r data-structure}
+# Get a general feel for the data: View structure of data frame
+str(temp30)
+```
+
+what is a QF. ->metadata
+Check for Quality flags
+
+``` {r qf-data}
+# Review the data quality (are these data you trust?)
+#1. Are there quality flags in your data? Count 'em up
+  sum(temp30$finalQF==1)
+
+```
+
+Do we have NA data?
+How to deal with? 
+
+``` {r na-data}
+Are there NA's in your data? Count 'em up
+  sum(is.na(temp30$tempTripleMean) )
+  #2. 
+
+mean(temp30$tempTripleMean)- 
+# why won't this work? 
+
+na.rm=TRUE  tells R to ignore them for calculaation,etc
+
+newDF <- na.omit(DF) -> new data frame without the NAs
+
+```
+
+Convert to correct time zone, default for this code is MST
+ assign time zone to just the first entry
+ 
+``` {r convert-date-time}
+
+# View the date range
+range(temp30$startDateTime)
+
+temp30$startDateTime <- as.POSIXct(temp30$startDateTime,
+format = "%Y-%m-%dT%H:%M", tz = "GMT")
+# check that conversion worked
+str(temp30$startDateTime)
+```
+
+Subset by date
+
+``` {r subset-date}
+# Limit dataset to dates of interest (4/1/2014-11/30/2014)
+subset(temp30, )
+
+```
+
+
+## plot 30-min data over year 
+
+
+## aggregate by day & find max ->  dplyr 
+
+``` {r daily-max-dplyr}
+dplyr groupby max
+
+```
+
+## Challenge (maybe) aggregate by mean daily or min daily
+
+
+## plot daily max over year
 
