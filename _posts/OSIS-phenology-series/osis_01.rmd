@@ -95,3 +95,6 @@ Plot - bar graph of % of individuals in different phenophase over course of year
 ```{r}
 
 ```
+
+
+Write csv (this will be read in new in subsuquent lessons)
